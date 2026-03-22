@@ -969,74 +969,195 @@
   </div>
 </div>
 
+
+<!-- ══════════ SCREEN: API SETUP ══════════ -->
+<div id="screen-apisetup" class="screen" style="align-items:center;justify-content:center;padding:2rem">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2rem;max-width:480px;width:100%;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:1rem">🔑</div>
+    <div style="font-family:var(--font-head);font-size:1.4rem;font-weight:800;margin-bottom:.5rem">Clé API Claude</div>
+    <p style="color:var(--muted);font-size:.9rem;margin-bottom:1.5rem;line-height:1.6">
+      Pour faire fonctionner le coach, entre ta clé API Anthropic.<br>
+      Elle sera sauvegardée sur cet appareil uniquement.
+    </p>
+    <div style="background:var(--surface2);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:.85rem;line-height:1.6;border-left:3px solid var(--accent);text-align:left">
+      1. Va sur <a href="https://console.anthropic.com" target="_blank" style="color:var(--accent)">console.anthropic.com</a><br>
+      2. <strong>API Keys → Create Key</strong><br>
+      3. Copie la clé et colle-la ci-dessous
+    </div>
+    <input type="password" id="api-key-input"
+      style="width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:.8rem 1rem;color:var(--text);font-family:'Courier New',monospace;font-size:.85rem;margin-bottom:.75rem;transition:border-color .2s;outline:none"
+      placeholder="sk-ant-api03-..."
+      onfocus="this.style.borderColor='var(--accent)'"
+      onblur="this.style.borderColor='var(--border)'"
+      onkeydown="if(event.key==='Enter')saveApiKey()" />
+    <div id="api-key-error" style="color:#f87171;font-size:.82rem;margin-bottom:.75rem;min-height:1.2rem"></div>
+    <button class="btn-primary" style="width:100%" onclick="saveApiKey()">✅ Enregistrer et démarrer</button>
+  </div>
+</div>
+
+<!-- ══════════ SCREEN: WELCOME ══════════ -->
+<div id="screen-welcome" class="screen">
+  <div class="welcome-logo">🎓</div>
+  <h1 class="welcome-title">Mon Coach<br>Brevet</h1>
+  <p class="welcome-sub">Ton assistant personnel pour cartonner au Brevet !</p>
+  <div class="day-info" id="welcome-date-info">
+    📅 <strong id="date-display">Chargement...</strong> — Session du jour
+  </div>
+  <button class="btn-primary" onclick="startSession()" style="margin-bottom:1rem">🚀 Démarrer ma session</button>
+  <br>
+  <button class="btn-secondary" onclick="showParent()">🔒 Espace parents</button>
+</div>
+
+<!-- ══════════ SCREEN: APP ══════════ -->
+<div id="screen-app" class="screen">
+  <div class="topbar">
+    <div class="topbar-logo">🎓 Coach Brevet</div>
+    <div style="display:flex;align-items:center;gap:.75rem">
+      <span class="sync-status sync-off" id="sync-status" onclick="openSetupModal()" style="cursor:pointer">☁️ Sheets</span>
+      <div class="topbar-badges">🏅 <span class="badge-count" id="badge-count-display">0</span> badges</div>
+    </div>
+  </div>
+  <div class="session-progress">
+    <div class="progress-steps">
+      <div class="step-dot active" id="step-1"></div>
+      <div class="step-dot" id="step-2"></div>
+      <div class="step-dot" id="step-3"></div>
+      <div class="step-dot" id="step-4"></div>
+      <div class="step-dot" id="step-5"></div>
+      <div class="step-dot" id="step-6"></div>
+    </div>
+    <div class="progress-label">
+      <span id="bloc-indicator"><span class="bloc-badge bloc1-badge">📚 Bloc 1 — Devoirs</span></span>
+      <span id="progress-text" style="color:var(--muted);font-size:.78rem">Étape 1/6</span>
+    </div>
+  </div>
+  <div class="content-area" id="main-content"></div>
+  <button class="fab-parent" onclick="showParent()">🔒 Parents</button>
+</div>
+
+<!-- ══════════ SCREEN: PARENT ══════════ -->
+<div id="screen-parent" class="screen">
+  <div class="parent-card">
+    <div class="parent-title">🔒 Espace Parents</div>
+    <div id="parent-login">
+      <p style="color:var(--muted);font-size:.9rem;text-align:center;margin-bottom:1rem">Mot de passe requis.</p>
+      <input type="password" class="input-pw" id="parent-pw" placeholder="Mot de passe..." />
+      <button class="btn-primary" style="width:100%" onclick="checkParentPW()">Accéder</button>
+      <br><br>
+      <button class="btn-secondary" style="width:100%" onclick="showScreen('screen-welcome')">← Retour</button>
+    </div>
+    <div id="parent-dashboard" class="hidden">
+      <h3 style="font-family:var(--font-head);margin-bottom:.5rem">📊 Historique des sessions</h3>
+      <div class="cloud-indicator" id="parent-cloud-indicator">
+        <span id="parent-cloud-icon">💾</span>
+        <span id="parent-cloud-text">Données locales uniquement</span>
+      </div>
+      <div id="parent-history" style="margin-top:1rem"></div>
+      <h3 style="font-family:var(--font-head);margin:.75rem 0 .5rem">🎁 Récompenses</h3>
+      <div class="recompenses-list" id="recomp-list">
+        <p style="color:var(--muted);font-size:.85rem">Configurer Google Sheets pour voir les récompenses.</p>
+      </div>
+      <div style="margin-top:1.5rem;text-align:center;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
+        <button class="btn-secondary" onclick="refreshParentData()">🔄 Actualiser</button>
+        <button class="btn-secondary" onclick="showScreen('screen-welcome')">← Retour</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BADGE TOAST -->
+<div class="badge-toast" id="badge-toast">
+  <div class="badge-toast-icon" id="toast-icon">🥇</div>
+  <div>
+    <div class="badge-toast-text" id="toast-title">Badge débloqué !</div>
+    <div class="badge-toast-sub" id="toast-sub">Bravo Alexandre !</div>
+  </div>
+</div>
+
+<!-- SETUP MODAL SHEETS -->
+<div class="modal-overlay hidden" id="setup-modal">
+  <div class="modal-box">
+    <div class="modal-title">☁️ Connexion Google Sheets</div>
+    <p style="color:var(--muted);font-size:.88rem;margin-bottom:1rem">Colle l'URL de déploiement de ton Apps Script.</p>
+    <div class="modal-step"><strong>1.</strong> Google Sheets → <code>Extensions → Apps Script</code></div>
+    <div class="modal-step"><strong>2.</strong> Colle le code <code>google-apps-script.js</code>, lance <code>testInit()</code></div>
+    <div class="modal-step"><strong>3.</strong> <code>Déployer → Nouveau déploiement → Application Web → Tout le monde</code></div>
+    <input type="url" class="input-url" id="sheets-url-input" placeholder="https://script.google.com/macros/s/XXXX/exec" />
+    <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+      <button class="btn-primary" onclick="saveAndTestSheetsUrl()">✅ Tester & Enregistrer</button>
+      <button class="btn-secondary" onclick="closeSetupModal()">Annuler</button>
+    </div>
+    <div id="setup-test-result" style="margin-top:1rem;font-size:.85rem;display:none"></div>
+  </div>
+</div>
+
 <script>
 // ══════════════════════════════════════════════
-//  CONFIG — METS TA CLÉ API ICI
+//  CONFIG — clé stockée dans le navigateur
 // ══════════════════════════════════════════════
-const CLAUDE_API_KEY = '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';
-let SHEETS_URL = localStorage.getItem('sheets_url') || '';
+let CLAUDE_API_KEY = localStorage.getItem('claude_api_key') || '';
+let SHEETS_URL     = localStorage.getItem('sheets_url')     || '';
 
-// ══════════════════════════════════════════════
-//  STATE
-// ══════════════════════════════════════════════
 const STATE = {
-  step: 0,
-  bloc1Subject: '',
-  bloc2Subject: '',
-  chatHistory: [],
-  bloc1Score: null,
-  bloc2Score: null,
+  step: 0, bloc1Subject: '', bloc2Subject: '',
+  chatHistory: [], bloc1Score: null, bloc2Score: null,
   sessionBadges: [],
   sessionDate: new Date().toLocaleDateString('fr-FR'),
   timerInterval: null,
-  sessions: JSON.parse(localStorage.getItem('alex_sessions') || '[]'),
-  badgeCount: parseInt(localStorage.getItem('alex_badges') || '0'),
+  sessions:   JSON.parse(localStorage.getItem('alex_sessions') || '[]'),
+  badgeCount: parseInt(localStorage.getItem('alex_badges')     || '0'),
   sheetsConnected: false,
 };
 
 const SUBJECTS = [
-  { id: 'math', label: 'Maths',           icon: '📐' },
-  { id: 'fr',   label: 'Français',        icon: '📖' },
-  { id: 'hg',   label: 'Histoire-Géo',    icon: '🌍' },
-  { id: 'svt',  label: 'SVT',             icon: '🌿' },
-  { id: 'pc',   label: 'Physique-Chimie', icon: '⚗️' },
-  { id: 'en',   label: 'Anglais',         icon: '🇬🇧' },
-  { id: 'emc',  label: 'EMC',             icon: '⚖️' },
+  { id:'math', label:'Maths',           icon:'📐' },
+  { id:'fr',   label:'Français',        icon:'📖' },
+  { id:'hg',   label:'Histoire-Géo',    icon:'🌍' },
+  { id:'svt',  label:'SVT',             icon:'🌿' },
+  { id:'pc',   label:'Physique-Chimie', icon:'⚗️' },
+  { id:'en',   label:'Anglais',         icon:'🇬🇧' },
+  { id:'emc',  label:'EMC',             icon:'⚖️' },
 ];
 
 const PARENT_PASSWORD = 'alexandre2024';
 
-// ── INIT ──
 document.addEventListener('DOMContentLoaded', () => {
-  const now = new Date();
   document.getElementById('date-display').textContent =
-    now.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+    new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   document.getElementById('badge-count-display').textContent = STATE.badgeCount;
   updateSyncBadge();
+  if (!CLAUDE_API_KEY) showScreen('screen-apisetup');
+  else showScreen('screen-welcome');
 });
 
-// ══════════════════════════════════════════════
-//  GOOGLE SHEETS
-// ══════════════════════════════════════════════
+// ── CLÉ API ──
+function saveApiKey() {
+  const key = document.getElementById('api-key-input').value.trim();
+  if (!key.startsWith('sk-ant-')) {
+    document.getElementById('api-key-error').textContent = '❌ Clé invalide — doit commencer par sk-ant-';
+    return;
+  }
+  CLAUDE_API_KEY = key;
+  localStorage.setItem('claude_api_key', key);
+  showScreen('screen-welcome');
+}
+
+// ── SHEETS ──
 function updateSyncBadge(status) {
   const el = document.getElementById('sync-status');
   if (!el) return;
-  if (!SHEETS_URL) { el.className = 'sync-status sync-off'; el.textContent = '☁️ Sheets'; return; }
-  if (status === 'ok')        { el.className = 'sync-status sync-ok';   el.textContent = '✅ Sheets'; STATE.sheetsConnected = true; }
-  else if (status === 'err')  { el.className = 'sync-status sync-err';  el.textContent = '❌ Sheets'; STATE.sheetsConnected = false; }
-  else if (status === 'wait') { el.className = 'sync-status sync-wait'; el.textContent = '⏳ Sync…'; }
-  else                        { el.className = 'sync-status sync-wait'; el.textContent = '☁️ Sheets'; }
+  if (!SHEETS_URL) { el.className='sync-status sync-off'; el.textContent='☁️ Sheets'; return; }
+  if (status==='ok')   { el.className='sync-status sync-ok';   el.textContent='✅ Sheets'; STATE.sheetsConnected=true; }
+  else if (status==='err')  { el.className='sync-status sync-err';  el.textContent='❌ Sheets'; STATE.sheetsConnected=false; }
+  else if (status==='wait') { el.className='sync-status sync-wait'; el.textContent='⏳ Sync…'; }
+  else                      { el.className='sync-status sync-wait'; el.textContent='☁️ Sheets'; }
 }
 
 async function sheetsCall(action, data) {
   if (!SHEETS_URL) return null;
   try {
     updateSyncBadge('wait');
-    const res = await fetch(SHEETS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action, data })
-    });
+    const res = await fetch(SHEETS_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action,data}) });
     const json = await res.json();
     updateSyncBadge(json.success ? 'ok' : 'err');
     return json;
@@ -1064,35 +1185,24 @@ async function saveAndTestSheetsUrl() {
   const url = document.getElementById('sheets-url-input').value.trim();
   const resultEl = document.getElementById('setup-test-result');
   resultEl.style.display = 'block';
-  resultEl.innerHTML = '<span style="color:#fbbf24">⏳ Test en cours...</span>';
+  resultEl.innerHTML = '<span style="color:#fbbf24">⏳ Test...</span>';
   if (!url.startsWith('https://script.google.com/macros/')) {
-    resultEl.innerHTML = '<span style="color:#f87171">❌ URL invalide</span>';
-    return;
+    resultEl.innerHTML = '<span style="color:#f87171">❌ URL invalide</span>'; return;
   }
-  SHEETS_URL = url;
-  localStorage.setItem('sheets_url', url);
+  SHEETS_URL = url; localStorage.setItem('sheets_url', url);
   try {
     const res = await fetch(`${url}?action=ping`);
     const json = await res.json();
     if (json.success) {
-      resultEl.innerHTML = `<span style="color:var(--green)">✅ ${json.message || 'Connexion réussie !'}</span>`;
-      updateSyncBadge('ok');
-      setTimeout(() => closeSetupModal(), 1500);
-    } else {
-      resultEl.innerHTML = `<span style="color:#f87171">❌ ${json.error}</span>`;
-      updateSyncBadge('err');
-    }
-  } catch(e) {
-    resultEl.innerHTML = '<span style="color:#f87171">❌ Impossible de contacter le script.</span>';
-    updateSyncBadge('err');
-  }
+      resultEl.innerHTML = `<span style="color:var(--green)">✅ ${json.message||'Connexion réussie !'}</span>`;
+      updateSyncBadge('ok'); setTimeout(() => closeSetupModal(), 1500);
+    } else { resultEl.innerHTML=`<span style="color:#f87171">❌ ${json.error}</span>`; updateSyncBadge('err'); }
+  } catch(e) { resultEl.innerHTML='<span style="color:#f87171">❌ Impossible de contacter le script.</span>'; updateSyncBadge('err'); }
 }
 
-// ══════════════════════════════════════════════
-//  NAVIGATION
-// ══════════════════════════════════════════════
+// ── NAV ──
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 function startSession() { showScreen('screen-app'); renderStep0(); }
@@ -1103,8 +1213,7 @@ function showParent() {
   document.getElementById('parent-pw').value = '';
 }
 function checkParentPW() {
-  const pw = document.getElementById('parent-pw').value;
-  if (pw === PARENT_PASSWORD) {
+  if (document.getElementById('parent-pw').value === PARENT_PASSWORD) {
     document.getElementById('parent-login').classList.add('hidden');
     document.getElementById('parent-dashboard').classList.remove('hidden');
     refreshParentData();
@@ -1114,63 +1223,48 @@ function checkParentPW() {
   }
 }
 
-// ══════════════════════════════════════════════
-//  PROGRESS
-// ══════════════════════════════════════════════
-function updateProgress(activeStep) {
-  for (let i = 1; i <= 6; i++) {
-    const dot = document.getElementById('step-' + i);
-    if (i < activeStep) dot.className = 'step-dot done';
-    else if (i === activeStep) dot.className = 'step-dot active';
-    else dot.className = 'step-dot';
+// ── PROGRESS ──
+function updateProgress(n) {
+  for (let i=1;i<=6;i++) {
+    const d=document.getElementById('step-'+i);
+    d.className = i<n?'step-dot done':i===n?'step-dot active':'step-dot';
   }
-  document.getElementById('progress-text').textContent = `Étape ${activeStep}/6`;
-  const blocEl = document.getElementById('bloc-indicator');
-  if (activeStep <= 3) blocEl.innerHTML = '<span class="bloc-badge bloc1-badge">📚 Bloc 1 — Devoirs</span>';
-  else if (activeStep === 4) blocEl.innerHTML = '<span class="bloc-badge bloc2-badge">🎯 Transition</span>';
-  else blocEl.innerHTML = '<span class="bloc-badge bloc2-badge">🏆 Bloc 2 — Brevet</span>';
+  document.getElementById('progress-text').textContent=`Étape ${n}/6`;
+  const b=document.getElementById('bloc-indicator');
+  if (n<=3) b.innerHTML='<span class="bloc-badge bloc1-badge">📚 Bloc 1 — Devoirs</span>';
+  else if (n===4) b.innerHTML='<span class="bloc-badge bloc2-badge">🎯 Transition</span>';
+  else b.innerHTML='<span class="bloc-badge bloc2-badge">🏆 Bloc 2 — Brevet</span>';
 }
 
-// ══════════════════════════════════════════════
-//  ETAPE 0 — CHOIX MATIÈRE
-// ══════════════════════════════════════════════
+// ── STEP 0 ──
 function renderStep0() {
   updateProgress(1);
   document.getElementById('main-content').innerHTML = `
-    <div class="step-header">
-      <div class="step-icon icon-purple">📚</div>
-      <div><div class="step-title">Salut Alexandre ! 👋</div>
-      <div class="step-desc">On commence par tes devoirs du jour. Quelle matière ?</div></div>
-    </div>
-    <div class="card">
-      <div class="subject-grid">${SUBJECTS.map(s=>`
-        <button class="subject-btn" onclick="selectSubject('${s.id}','${s.label}','${s.icon}')">
-          <span class="subj-icon">${s.icon}</span>${s.label}
-        </button>`).join('')}
-      </div>
-    </div>`;
+    <div class="step-header"><div class="step-icon icon-purple">📚</div>
+    <div><div class="step-title">Salut Alexandre ! 👋</div>
+    <div class="step-desc">Quelle matière tu veux travailler aujourd'hui ?</div></div></div>
+    <div class="card"><div class="subject-grid">
+      ${SUBJECTS.map(s=>`<button class="subject-btn" onclick="selectSubject('${s.id}','${s.label}','${s.icon}')">
+        <span class="subj-icon">${s.icon}</span>${s.label}</button>`).join('')}
+    </div></div>`;
 }
 
-function selectSubject(id, label, icon) {
-  STATE.bloc1Subject = label;
+function selectSubject(id,label,icon) {
+  STATE.bloc1Subject=label;
   document.querySelectorAll('.subject-btn').forEach(b=>b.classList.remove('selected'));
   event.target.closest('.subject-btn').classList.add('selected');
-  setTimeout(() => renderStep1(label, icon), 300);
+  setTimeout(()=>renderStep1(label,icon),300);
 }
 
-// ══════════════════════════════════════════════
-//  ETAPE 1 — DESCRIPTION DEVOIRS
-// ══════════════════════════════════════════════
-function renderStep1(subject, icon) {
+// ── STEP 1 ──
+function renderStep1(subject,icon) {
   updateProgress(2);
   document.getElementById('main-content').innerHTML = `
-    <div class="step-header">
-      <div class="step-icon icon-purple">${icon}</div>
-      <div><div class="step-title">${subject}</div>
-      <div class="step-desc">Décris ce que tu as à faire...</div></div>
-    </div>
+    <div class="step-header"><div class="step-icon icon-purple">${icon}</div>
+    <div><div class="step-title">${subject}</div>
+    <div class="step-desc">Décris ce que tu as à faire...</div></div></div>
     <div class="card">
-      <textarea class="input-area" id="hw-desc" placeholder="Ex: contrôle sur les équations demain, je comprends pas comment isoler x..." rows="4"></textarea>
+      <textarea class="input-area" id="hw-desc" placeholder="Ex: contrôle sur les équations demain, je comprends pas isoler x..." rows="4"></textarea>
       <div style="display:flex;gap:.75rem;margin-top:1rem;justify-content:flex-end">
         <button class="btn-secondary" onclick="renderStep0()">← Changer</button>
         <button class="btn-primary" onclick="startBloc1()">C'est parti ! 🚀</button>
@@ -1178,68 +1272,50 @@ function renderStep1(subject, icon) {
     </div>`;
 }
 
-// ══════════════════════════════════════════════
-//  BLOC 1
-// ══════════════════════════════════════════════
+// ── BLOC 1 ──
 async function startBloc1() {
-  const desc = document.getElementById('hw-desc').value.trim();
-  if (!desc) { document.getElementById('hw-desc').style.borderColor='var(--accent2)'; return; }
-  updateProgress(3); STATE.step = 2; STATE.chatHistory = [];
-  renderChatUI('💬', `📚 Bloc 1 — ${STATE.bloc1Subject}`, '30 min · Cours + Révision + Exercice');
+  const desc=document.getElementById('hw-desc').value.trim();
+  if (!desc){document.getElementById('hw-desc').style.borderColor='var(--accent2)';return;}
+  updateProgress(3); STATE.step=2; STATE.chatHistory=[];
+  renderChatUI('💬',`📚 Bloc 1 — ${STATE.bloc1Subject}`,'30 min · Cours + Révision + Exercice');
   startTimer(30*60);
-  const userMsg = `MATIÈRE : ${STATE.bloc1Subject}\nDEVOIRS DU JOUR : ${desc}\n\nLance la session avec :\n1. 📘 RAPPEL DE COURS sur la notion\n2. 🔁 3 questions de révision guidée (une à la fois)\n3. ✏️ Un exercice d'application noté sur 10\n\nCommence par le RAPPEL DE COURS maintenant.`;
-  STATE.chatHistory = [{ role:'user', content: userMsg }];
+  STATE.chatHistory=[{role:'user',content:`MATIÈRE : ${STATE.bloc1Subject}\nDEVOIRS : ${desc}\n\nLance la session :\n1. 📘 RAPPEL DE COURS\n2. 🔁 3 questions révision (une à la fois)\n3. ✏️ Exercice noté sur 10\n\nCommence par le RAPPEL DE COURS.`}];
   await callClaude();
 }
 
-// ══════════════════════════════════════════════
-//  TRANSITION BLOC 1 → BLOC 2
-// ══════════════════════════════════════════════
+// ── TRANSITION ──
 function showTransition() {
-  clearInterval(STATE.timerInterval);
-  updateProgress(4); STATE.step = 3;
-  const others = SUBJECTS.filter(s => s.label !== STATE.bloc1Subject);
-  const pick = others[Math.floor(Math.random() * others.length)];
-  STATE.bloc2Subject = pick.label;
-  document.getElementById('main-content').innerHTML = `
+  clearInterval(STATE.timerInterval); updateProgress(4); STATE.step=3;
+  const others=SUBJECTS.filter(s=>s.label!==STATE.bloc1Subject);
+  const pick=others[Math.floor(Math.random()*others.length)];
+  STATE.bloc2Subject=pick.label;
+  document.getElementById('main-content').innerHTML=`
     <div class="bloc-transition">
-      <div style="font-size:2rem">🎉</div>
-      <h2>Bloc 1 terminé !</h2>
+      <div style="font-size:2rem">🎉</div><h2>Bloc 1 terminé !</h2>
       <p style="color:var(--muted);margin:.5rem 0 1rem">Excellent travail Alexandre ! 🧠💪</p>
-      <p style="margin-bottom:1.5rem">On passe aux <strong style="color:var(--accent2)">révisions Brevet</strong> !</p>
       <p style="background:rgba(255,101,132,.1);border:1px solid rgba(255,101,132,.3);border-radius:10px;padding:.8rem 1.2rem;margin-bottom:1.5rem">
-        🎯 Matière tirée au sort : <strong style="color:var(--accent2)">${pick.icon} ${pick.label}</strong>
-      </p>
+        🎯 Matière tirée au sort : <strong style="color:var(--accent2)">${pick.icon} ${pick.label}</strong></p>
       <button class="btn-primary" onclick="startBloc2('${pick.label}','${pick.icon}')">Démarrer le Bloc 2 →</button>
     </div>`;
 }
 
-// ══════════════════════════════════════════════
-//  BLOC 2
-// ══════════════════════════════════════════════
-async function startBloc2(subject, icon) {
-  updateProgress(5); STATE.step = 4; STATE.chatHistory = [];
-  renderChatUI(icon, `🏆 Bloc 2 — ${subject}`, '30 min · Fiche + Quiz + Mini-épreuve');
+// ── BLOC 2 ──
+async function startBloc2(subject,icon) {
+  updateProgress(5); STATE.step=4; STATE.chatHistory=[];
+  renderChatUI(icon,`🏆 Bloc 2 — ${subject}`,'30 min · Fiche + Quiz + Mini-épreuve');
   startTimer(30*60);
-  const userMsg = `BLOC 2 — RÉVISION BREVET\nMATIÈRE : ${subject}\n\nLance :\n1. 📋 FICHE DE RÉVISION (notion clé du programme 3ème)\n2. 🧠 QUIZ BREVET (5 questions style Brevet, une à la fois)\n3. 📝 MINI-ÉPREUVE (1 exercice Brevet avec barème)\n\nCommence par la FICHE DE RÉVISION.`;
-  STATE.chatHistory = [{ role:'user', content: userMsg }];
+  STATE.chatHistory=[{role:'user',content:`BLOC 2 — RÉVISION BREVET\nMATIÈRE : ${subject}\n\nLance :\n1. 📋 FICHE DE RÉVISION\n2. 🧠 QUIZ BREVET (5 questions une à la fois)\n3. 📝 MINI-ÉPREUVE avec barème\n\nCommence par la FICHE DE RÉVISION.`}];
   await callClaude();
 }
 
-// ══════════════════════════════════════════════
-//  CHAT UI
-// ══════════════════════════════════════════════
-function renderChatUI(icon, title, desc) {
-  document.getElementById('main-content').innerHTML = `
-    <div class="step-header">
-      <div class="step-icon icon-purple">${icon}</div>
-      <div><div class="step-title">${title}</div><div class="step-desc">${desc}</div></div>
-    </div>
-    <div class="timer-bar">
-      <span class="timer-icon">⏱️</span>
-      <div class="timer-track"><div class="timer-fill" id="timer-fill" style="width:100%"></div></div>
-      <span class="timer-text" id="timer-text">30:00</span>
-    </div>
+// ── CHAT UI ──
+function renderChatUI(icon,title,desc) {
+  document.getElementById('main-content').innerHTML=`
+    <div class="step-header"><div class="step-icon icon-purple">${icon}</div>
+    <div><div class="step-title">${title}</div><div class="step-desc">${desc}</div></div></div>
+    <div class="timer-bar"><span class="timer-icon">⏱️</span>
+    <div class="timer-track"><div class="timer-fill" id="timer-fill" style="width:100%"></div></div>
+    <span class="timer-text" id="timer-text">30:00</span></div>
     <div class="chat-container" id="chat-area"></div>
     <div class="input-row">
       <textarea class="input-area" id="chat-input" placeholder="Ta réponse..." rows="1"
@@ -1248,325 +1324,226 @@ function renderChatUI(icon, title, desc) {
     </div>`;
 }
 
-// ══════════════════════════════════════════════
-//  FIN DE SESSION + SYNC SHEETS
-// ══════════════════════════════════════════════
+// ── FIN SESSION ──
 async function showSessionEnd() {
-  clearInterval(STATE.timerInterval);
-  updateProgress(6); STATE.step = 5;
+  clearInterval(STATE.timerInterval); updateProgress(6); STATE.step=5;
   checkBadges();
-
-  const sessionData = {
-    date: STATE.sessionDate,
-    bloc1: { matiere: STATE.bloc1Subject, score: STATE.bloc1Score },
-    bloc2: { matiere: STATE.bloc2Subject, score: STATE.bloc2Score },
-    badges: STATE.sessionBadges
-  };
-  STATE.sessions.push(sessionData);
-  localStorage.setItem('alex_sessions', JSON.stringify(STATE.sessions));
-  localStorage.setItem('alex_badges', STATE.badgeCount);
-
-  const payload = buildSessionPayload();
-
-  let syncMsg = '';
+  STATE.sessions.push({date:STATE.sessionDate,bloc1:{matiere:STATE.bloc1Subject,score:STATE.bloc1Score},bloc2:{matiere:STATE.bloc2Subject,score:STATE.bloc2Score},badges:STATE.sessionBadges});
+  localStorage.setItem('alex_sessions',JSON.stringify(STATE.sessions));
+  localStorage.setItem('alex_badges',STATE.badgeCount);
+  const payload=buildSessionPayload();
+  let syncMsg='';
   if (SHEETS_URL) {
     updateSyncBadge('wait');
-    const result = await sheetsCall('saveSession', payload);
-    syncMsg = result?.success
-      ? `<div class="cloud-indicator" style="justify-content:center;margin:1rem 0"><span>✅</span><span>Session #${result.sessionNumber} sauvegardée dans Google Sheets</span></div>`
-      : `<div class="cloud-indicator" style="justify-content:center;margin:1rem 0;border-color:rgba(248,113,113,.3)"><span>⚠️</span><span>Sauvegarde locale uniquement</span></div>`;
+    const result=await sheetsCall('saveSession',payload);
+    syncMsg=result?.success
+      ?`<div class="cloud-indicator" style="justify-content:center;margin:1rem 0"><span>✅</span><span>Session #${result.sessionNumber} sauvegardée dans Google Sheets</span></div>`
+      :`<div class="cloud-indicator" style="justify-content:center;margin:1rem 0;border-color:rgba(248,113,113,.3)"><span>⚠️</span><span>Sauvegarde locale uniquement</span></div>`;
   } else {
-    syncMsg = `<div class="cloud-indicator" style="justify-content:center;margin:1rem 0"><span>💾</span><span>Données locales · <a href="#" onclick="openSetupModal();return false" style="color:var(--accent)">Configurer Google Sheets</a></span></div>`;
+    syncMsg=`<div class="cloud-indicator" style="justify-content:center;margin:1rem 0"><span>💾</span><span>Données locales · <a href="#" onclick="openSetupModal();return false" style="color:var(--accent)">Configurer Google Sheets</a></span></div>`;
   }
-
-  document.getElementById('main-content').innerHTML = `
+  document.getElementById('main-content').innerHTML=`
     <div class="end-card">
-      <div class="end-emoji">🏆</div>
-      <div class="end-title">Session terminée !</div>
+      <div class="end-emoji">🏆</div><div class="end-title">Session terminée !</div>
       <p style="color:var(--muted);margin-bottom:1rem">Excellent travail aujourd'hui, Alexandre ! 💪</p>
       ${syncMsg}
       <div class="end-stats">
-        <div class="stat-box"><div class="stat-num">${STATE.bloc1Score !== null ? STATE.bloc1Score+'/10' : '✓'}</div><div class="stat-label">Bloc 1 · ${STATE.bloc1Subject}</div></div>
-        <div class="stat-box"><div class="stat-num">${STATE.bloc2Score !== null ? STATE.bloc2Score+'/5' : '✓'}</div><div class="stat-label">Bloc 2 · ${STATE.bloc2Subject}</div></div>
+        <div class="stat-box"><div class="stat-num">${STATE.bloc1Score!==null?STATE.bloc1Score+'/10':'✓'}</div><div class="stat-label">Bloc 1 · ${STATE.bloc1Subject}</div></div>
+        <div class="stat-box"><div class="stat-num">${STATE.bloc2Score!==null?STATE.bloc2Score+'/5':'✓'}</div><div class="stat-label">Bloc 2 · ${STATE.bloc2Subject}</div></div>
         <div class="stat-box"><div class="stat-num">${STATE.sessions.length}</div><div class="stat-label">Sessions totales</div></div>
         <div class="stat-box"><div class="stat-num">${STATE.badgeCount}</div><div class="stat-label">Badges gagnés</div></div>
       </div>
-      ${STATE.sessionBadges.length > 0 ? `
-        <p style="font-family:var(--font-head);font-weight:700;margin-bottom:.75rem">🎖️ Badges débloqués !</p>
-        <div class="badges-row">${STATE.sessionBadges.map(b=>`<div class="badge-chip">${b}</div>`).join('')}</div>` : ''}
+      ${STATE.sessionBadges.length>0?`<p style="font-family:var(--font-head);font-weight:700;margin-bottom:.75rem">🎖️ Badges débloqués !</p>
+        <div class="badges-row">${STATE.sessionBadges.map(b=>`<div class="badge-chip">${b}</div>`).join('')}</div>`:''}
       <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem">
         <button class="btn-primary" onclick="newSession()">🔄 Nouvelle session</button>
         <button class="btn-secondary" onclick="toggleJSON()">📊 JSON</button>
       </div>
       <div id="json-display" class="hidden">
         <button class="collapsible-toggle" onclick="toggleJSON()">Masquer ↑</button>
-        <div class="json-block">${JSON.stringify(payload, null, 2).replace(/</g,'&lt;')}</div>
+        <div class="json-block">${JSON.stringify(payload,null,2).replace(/</g,'&lt;')}</div>
       </div>
     </div>`;
-
-  STATE.sessionBadges.forEach((badge, i) => setTimeout(() => showBadgeToast(badge), i * 1500));
+  STATE.sessionBadges.forEach((b,i)=>setTimeout(()=>showBadgeToast(b),i*1500));
 }
 
-function toggleJSON() { document.getElementById('json-display').classList.toggle('hidden'); }
-
-function newSession() {
-  Object.assign(STATE, { step:0, bloc1Subject:'', bloc2Subject:'', chatHistory:[], bloc1Score:null, bloc2Score:null, sessionBadges:[], sessionDate: new Date().toLocaleDateString('fr-FR') });
-  clearInterval(STATE.timerInterval);
-  renderStep0();
+function toggleJSON(){document.getElementById('json-display').classList.toggle('hidden');}
+function newSession(){
+  Object.assign(STATE,{step:0,bloc1Subject:'',bloc2Subject:'',chatHistory:[],bloc1Score:null,bloc2Score:null,sessionBadges:[],sessionDate:new Date().toLocaleDateString('fr-FR')});
+  clearInterval(STATE.timerInterval); renderStep0();
 }
 
-// ══════════════════════════════════════════════
-//  CLAUDE API — CLÉ AU BON ENDROIT
-// ══════════════════════════════════════════════
-function getSystemPrompt() {
+// ── CLAUDE API ──
+function getSystemPrompt(){
   return `Tu es un assistant pédagogique expert pour élèves de 3ème. Tu t'adresses à Alexandre, 14 ans.
-
-RÈGLES : toujours positif, langage ado, prénom "Alexandre" régulièrement, célèbre chaque progrès, en cas d'erreur "Ce n'est pas grave, voici comment...".
-
-FORMAT : titres avec émojis (📘 RAPPEL DE COURS, 🔁 RÉVISION GUIDÉE, ✏️ EXERCICE), puces, **gras** pour points-clés.
-
+RÈGLES : toujours positif, langage ado, prénom "Alexandre" régulièrement, célèbre chaque progrès.
+FORMAT : titres émojis (📘 RAPPEL DE COURS, 🔁 RÉVISION GUIDÉE, ✏️ EXERCICE), puces, **gras**.
 SCORES : affiche "SCORE : X/10" ou "SCORE : X/5" sur une ligne séparée.
-
-MARQUEURS DE FIN :
-- Fin Bloc 1 complet → termine par exactement : ###BLOC1_COMPLETE###
-- Fin Bloc 2 complet → termine par exactement : ###BLOC2_COMPLETE###`;
+MARQUEURS : fin Bloc 1 → ###BLOC1_COMPLETE### · fin Bloc 2 → ###BLOC2_COMPLETE###`;
 }
 
-async function callClaude() {
-  const chatArea = document.getElementById('chat-area');
-  const sendBtn = document.getElementById('send-btn');
-  if (sendBtn) sendBtn.disabled = true;
-
-  const loadingEl = document.createElement('div');
-  loadingEl.className = 'msg msg-ai';
-  loadingEl.innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>';
+async function callClaude(){
+  const chatArea=document.getElementById('chat-area');
+  const sendBtn=document.getElementById('send-btn');
+  if(sendBtn) sendBtn.disabled=true;
+  const loadingEl=document.createElement('div');
+  loadingEl.className='msg msg-ai';
+  loadingEl.innerHTML='<div class="loading-dots"><span></span><span></span><span></span></div>';
   chatArea.appendChild(loadingEl);
-  chatArea.scrollTop = chatArea.scrollHeight;
-
+  chatArea.scrollTop=chatArea.scrollHeight;
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
         'x-api-key': CLAUDE_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
       },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1500,
-        system: getSystemPrompt(),
-        messages: STATE.chatHistory
-      })
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,system:getSystemPrompt(),messages:STATE.chatHistory})
     });
-
-    const data = await res.json();
-    const text = data.content?.[0]?.text || 'Désolé, une erreur est survenue.';
+    const data=await res.json();
+    if(data.error){loadingEl.innerHTML=`<p style="color:var(--accent2)">⚠️ Erreur API : ${data.error.message}</p>`;if(sendBtn)sendBtn.disabled=false;return;}
+    const text=data.content?.[0]?.text||'Erreur.';
     loadingEl.remove();
-
-    let displayText = text;
-    const bloc1Done = text.includes('###BLOC1_COMPLETE###');
-    const bloc2Done = text.includes('###BLOC2_COMPLETE###');
-    if (bloc1Done) displayText = text.replace('###BLOC1_COMPLETE###', '').trim();
-    if (bloc2Done) displayText = text.replace('###BLOC2_COMPLETE###', '').trim();
-
-    const scoreMatch = displayText.match(/SCORE\s*:\s*(\d+)\s*\/\s*(10|5)/i);
-    if (scoreMatch) {
-      const [, score, max] = scoreMatch;
-      if (max === '10') STATE.bloc1Score = parseInt(score);
-      if (max === '5')  STATE.bloc2Score = parseInt(score);
-    }
-
-    STATE.chatHistory.push({ role: 'assistant', content: text });
-
-    const msgEl = document.createElement('div');
-    msgEl.className = 'msg msg-ai';
-    msgEl.innerHTML = formatAIText(displayText);
+    let displayText=text;
+    const b1=text.includes('###BLOC1_COMPLETE###');
+    const b2=text.includes('###BLOC2_COMPLETE###');
+    if(b1) displayText=text.replace('###BLOC1_COMPLETE###','').trim();
+    if(b2) displayText=text.replace('###BLOC2_COMPLETE###','').trim();
+    const sm=displayText.match(/SCORE\s*:\s*(\d+)\s*\/\s*(10|5)/i);
+    if(sm){if(sm[2]==='10')STATE.bloc1Score=parseInt(sm[1]);if(sm[2]==='5')STATE.bloc2Score=parseInt(sm[1]);}
+    STATE.chatHistory.push({role:'assistant',content:text});
+    const msgEl=document.createElement('div');
+    msgEl.className='msg msg-ai';
+    msgEl.innerHTML=formatAIText(displayText);
     chatArea.appendChild(msgEl);
-    chatArea.scrollTop = chatArea.scrollHeight;
-
-    if (bloc1Done) setTimeout(() => showTransition(), 1200);
-    else if (bloc2Done) setTimeout(() => showSessionEnd(), 1200);
-
-  } catch(e) {
-    loadingEl.innerHTML = `<p style="color:var(--accent2)">⚠️ Erreur de connexion : ${e.message}</p>`;
-    console.error(e);
-  }
-  if (sendBtn) sendBtn.disabled = false;
+    chatArea.scrollTop=chatArea.scrollHeight;
+    if(b1) setTimeout(()=>showTransition(),1200);
+    else if(b2) setTimeout(()=>showSessionEnd(),1200);
+  } catch(e){loadingEl.innerHTML=`<p style="color:var(--accent2)">⚠️ Erreur : ${e.message}</p>`;}
+  if(sendBtn) sendBtn.disabled=false;
 }
 
-async function sendMessage() {
-  const input = document.getElementById('chat-input');
-  if (!input) return;
-  const text = input.value.trim();
-  if (!text) return;
-  const chatArea = document.getElementById('chat-area');
-  const userEl = document.createElement('div');
-  userEl.className = 'msg msg-user';
-  userEl.textContent = text;
+async function sendMessage(){
+  const input=document.getElementById('chat-input');
+  if(!input) return;
+  const text=input.value.trim();
+  if(!text) return;
+  const chatArea=document.getElementById('chat-area');
+  const userEl=document.createElement('div');
+  userEl.className='msg msg-user';
+  userEl.textContent=text;
   chatArea.appendChild(userEl);
-  chatArea.scrollTop = chatArea.scrollHeight;
-  input.value = '';
-  STATE.chatHistory.push({ role: 'user', content: text });
+  chatArea.scrollTop=chatArea.scrollHeight;
+  input.value='';
+  STATE.chatHistory.push({role:'user',content:text});
   await callClaude();
 }
 
-// ══════════════════════════════════════════════
-//  FORMATTAGE RÉPONSE IA
-// ══════════════════════════════════════════════
-function formatAIText(text) {
-  let html = text
-    .replace(/^#{1,3}\s*(.+)$/gm, '<h3>$1</h3>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/^[-•]\s+(.+)$/gm, '<li>$1</li>')
-    .replace(/(SCORE\s*:\s*\d+\s*\/\s*(?:10|5))/gi, '<span style="font-family:var(--font-head);font-size:1.2rem;font-weight:800;color:var(--green)">🎯 $1</span>')
-    .replace(/^(\d+)\.\s+(.+)$/gm, '<li><strong>$1.</strong> $2</li>')
-    .replace(/((<li>.*?<\/li>[\n]?)+)/gs, '<ul>$1</ul>')
-    .replace(/\n\n+/g, '</p><p>')
-    .replace(/\n/g, '<br>');
+function formatAIText(text){
+  let html=text
+    .replace(/^#{1,3}\s*(.+)$/gm,'<h3>$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/^[-•]\s+(.+)$/gm,'<li>$1</li>')
+    .replace(/(SCORE\s*:\s*\d+\s*\/\s*(?:10|5))/gi,'<span style="font-family:var(--font-head);font-size:1.2rem;font-weight:800;color:var(--green)">🎯 $1</span>')
+    .replace(/^(\d+)\.\s+(.+)$/gm,'<li><strong>$1.</strong> $2</li>')
+    .replace(/((<li>.*?<\/li>[\n]?)+)/gs,'<ul>$1</ul>')
+    .replace(/\n\n+/g,'</p><p>')
+    .replace(/\n/g,'<br>');
   return `<p>${html}</p>`;
 }
 
-// ══════════════════════════════════════════════
-//  TIMER
-// ══════════════════════════════════════════════
-function startTimer(totalSeconds) {
+function startTimer(totalSeconds){
   clearInterval(STATE.timerInterval);
-  let remaining = totalSeconds;
-  STATE.timerInterval = setInterval(() => {
+  let remaining=totalSeconds;
+  STATE.timerInterval=setInterval(()=>{
     remaining--;
-    if (remaining < 0) { clearInterval(STATE.timerInterval); return; }
-    const mins = Math.floor(remaining / 60), secs = remaining % 60;
-    const timerText = document.getElementById('timer-text');
-    const timerFill = document.getElementById('timer-fill');
-    if (timerText) timerText.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
-    if (timerFill) {
-      const pct = (remaining / totalSeconds) * 100;
-      timerFill.style.width = pct + '%';
-      if (pct < 20) timerFill.style.background = 'var(--accent2)';
-    }
-  }, 1000);
+    if(remaining<0){clearInterval(STATE.timerInterval);return;}
+    const mins=Math.floor(remaining/60),secs=remaining%60;
+    const tt=document.getElementById('timer-text');
+    const tf=document.getElementById('timer-fill');
+    if(tt) tt.textContent=`${mins}:${secs.toString().padStart(2,'0')}`;
+    if(tf){const pct=(remaining/totalSeconds)*100;tf.style.width=pct+'%';if(pct<20)tf.style.background='var(--accent2)';}
+  },1000);
 }
 
-// ══════════════════════════════════════════════
-//  BADGES
-// ══════════════════════════════════════════════
-function checkBadges() {
-  const total = STATE.sessions.length + 1;
-  const hasBadge = name => STATE.sessions.some(s => s.badges?.includes(name)) || STATE.sessionBadges.includes(name);
-  if (total === 1) addBadge('🥇 Première Leçon');
-  if (STATE.bloc1Score === 10) addBadge('⭐ Sans Faute');
-  if (STATE.bloc1Score >= 8) {
-    const cnt = STATE.sessions.filter(s => s.bloc1?.matiere === STATE.bloc1Subject && s.bloc1?.score >= 8).length;
-    if (cnt >= 4) addBadge(`🏆 Expert ${STATE.bloc1Subject}`);
-  }
-  if (total >= 10 && !hasBadge('📚 Studieux'))       addBadge('📚 Studieux');
-  if (total >= 3  && !hasBadge('🔥 Série x3'))       addBadge('🔥 Série x3');
-  if (total >= 7  && !hasBadge('🔥🔥 Série x7'))     addBadge('🔥🔥 Série x7');
-  if (total >= 20 && !hasBadge('🎯 Brevet Ready'))   addBadge('🎯 Brevet Ready');
-  if (total >= 30 && !hasBadge('💪 Persévérant'))    addBadge('💪 Persévérant');
+function checkBadges(){
+  const total=STATE.sessions.length+1;
+  const has=name=>STATE.sessions.some(s=>s.badges?.includes(name))||STATE.sessionBadges.includes(name);
+  if(total===1) addBadge('🥇 Première Leçon');
+  if(STATE.bloc1Score===10) addBadge('⭐ Sans Faute');
+  if(STATE.bloc1Score>=8){const cnt=STATE.sessions.filter(s=>s.bloc1?.matiere===STATE.bloc1Subject&&s.bloc1?.score>=8).length;if(cnt>=4)addBadge(`🏆 Expert ${STATE.bloc1Subject}`);}
+  if(total>=10&&!has('📚 Studieux'))     addBadge('📚 Studieux');
+  if(total>=3 &&!has('🔥 Série x3'))     addBadge('🔥 Série x3');
+  if(total>=7 &&!has('🔥🔥 Série x7'))  addBadge('🔥🔥 Série x7');
+  if(total>=20&&!has('🎯 Brevet Ready')) addBadge('🎯 Brevet Ready');
+  if(total>=30&&!has('💪 Persévérant'))  addBadge('💪 Persévérant');
 }
 
-function addBadge(badge) {
-  if (STATE.sessionBadges.includes(badge)) return;
-  STATE.sessionBadges.push(badge);
-  STATE.badgeCount++;
-  document.getElementById('badge-count-display').textContent = STATE.badgeCount;
+function addBadge(badge){
+  if(STATE.sessionBadges.includes(badge))return;
+  STATE.sessionBadges.push(badge);STATE.badgeCount++;
+  document.getElementById('badge-count-display').textContent=STATE.badgeCount;
 }
 
-function showBadgeToast(badge) {
-  const toast = document.getElementById('badge-toast');
-  document.getElementById('toast-icon').textContent = badge.split(' ')[0];
-  document.getElementById('toast-title').textContent = badge;
-  document.getElementById('toast-sub').textContent = 'Bravo Alexandre ! Continue comme ça ! 🔥';
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 3000);
+function showBadgeToast(badge){
+  const toast=document.getElementById('badge-toast');
+  document.getElementById('toast-icon').textContent=badge.split(' ')[0];
+  document.getElementById('toast-title').textContent=badge;
+  document.getElementById('toast-sub').textContent='Bravo Alexandre ! Continue ! 🔥';
+  toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),3000);
 }
 
-// ══════════════════════════════════════════════
-//  PAYLOAD SESSION
-// ══════════════════════════════════════════════
-function buildSessionPayload() {
+function buildSessionPayload(){
   return {
-    date: STATE.sessionDate,
-    duree_totale_minutes: 60,
-    bloc1: { matiere: STATE.bloc1Subject, score_exercice: STATE.bloc1Score, note_sur_10: STATE.bloc1Score, badges_gagnes: [] },
-    bloc2: { matiere_aleatoire: STATE.bloc2Subject, score_quiz: STATE.bloc2Score, note_sur_5: STATE.bloc2Score, badges_gagnes: [] },
-    badges_totaux_session: STATE.sessionBadges,
-    commentaire_pedagogique: `Session du ${STATE.sessionDate}. Bloc1: ${STATE.bloc1Subject} (${STATE.bloc1Score??'N/A'}/10). Bloc2: ${STATE.bloc2Subject} (${STATE.bloc2Score??'N/A'}/5).`
+    date:STATE.sessionDate, duree_totale_minutes:60,
+    bloc1:{matiere:STATE.bloc1Subject,score_exercice:STATE.bloc1Score,note_sur_10:STATE.bloc1Score,badges_gagnes:[]},
+    bloc2:{matiere_aleatoire:STATE.bloc2Subject,score_quiz:STATE.bloc2Score,note_sur_5:STATE.bloc2Score,badges_gagnes:[]},
+    badges_totaux_session:STATE.sessionBadges,
+    commentaire_pedagogique:`Session du ${STATE.sessionDate}. Bloc1: ${STATE.bloc1Subject} (${STATE.bloc1Score??'N/A'}/10). Bloc2: ${STATE.bloc2Subject} (${STATE.bloc2Score??'N/A'}/5).`
   };
 }
 
-// ══════════════════════════════════════════════
-//  ESPACE PARENTS
-// ══════════════════════════════════════════════
-async function refreshParentData() {
-  const icon = document.getElementById('parent-cloud-icon');
-  const txt  = document.getElementById('parent-cloud-text');
-  if (icon) icon.textContent = '⏳';
-  if (txt)  txt.textContent  = 'Chargement...';
-
-  if (SHEETS_URL) {
-    const result = await sheetsGet('getSessions');
-    if (result?.success && result.sessions?.length) {
-      renderSessionsList(result.sessions, true);
-      if (icon) icon.textContent = '☁️';
-      if (txt)  txt.textContent  = `${result.sessions.length} sessions dans Google Sheets`;
-    } else {
-      renderLocalHistory();
-      if (icon) icon.textContent = '⚠️';
-      if (txt)  txt.textContent  = 'Sheets indisponible — données locales';
-    }
+async function refreshParentData(){
+  const icon=document.getElementById('parent-cloud-icon');
+  const txt=document.getElementById('parent-cloud-text');
+  if(icon)icon.textContent='⏳';if(txt)txt.textContent='Chargement...';
+  if(SHEETS_URL){
+    const result=await sheetsGet('getSessions');
+    if(result?.success&&result.sessions?.length){
+      renderSessionsList(result.sessions,true);
+      if(icon)icon.textContent='☁️';if(txt)txt.textContent=`${result.sessions.length} sessions dans Google Sheets`;
+    } else {renderLocalHistory();if(icon)icon.textContent='⚠️';if(txt)txt.textContent='Sheets indisponible — données locales';}
     loadRecompenses();
-  } else {
-    renderLocalHistory();
-    if (icon) icon.textContent = '💾';
-    if (txt)  txt.textContent  = 'Données locales · Configurer Sheets pour le cloud';
-  }
+  } else {renderLocalHistory();if(icon)icon.textContent='💾';if(txt)txt.textContent='Données locales · Configurer Sheets';}
 }
 
-function renderLocalHistory() {
-  if (!STATE.sessions.length) {
-    document.getElementById('parent-history').innerHTML =
-      '<p style="color:var(--muted);text-align:center;font-size:.88rem">Aucune session.</p>';
-    return;
-  }
-  const mapped = [...STATE.sessions].reverse().map(s => ({
-    'Date': s.date,
-    'Matière Bloc1': s.bloc1?.matiere || '—',
-    'Score Bloc1 /10': s.bloc1?.score ?? '',
-    'Matière Bloc2': s.bloc2?.matiere || '—',
-    'Score Bloc2 /5': s.bloc2?.score ?? '',
-    'Badges session': (s.badges || []).join(', ')
-  }));
-  renderSessionsList(mapped, false);
+function renderLocalHistory(){
+  if(!STATE.sessions.length){document.getElementById('parent-history').innerHTML='<p style="color:var(--muted);text-align:center;font-size:.88rem">Aucune session.</p>';return;}
+  renderSessionsList([...STATE.sessions].reverse().map(s=>({'Date':s.date,'Matière Bloc1':s.bloc1?.matiere||'—','Score Bloc1 /10':s.bloc1?.score??'','Matière Bloc2':s.bloc2?.matiere||'—','Score Bloc2 /5':s.bloc2?.score??'','Badges session':(s.badges||[]).join(', ')})),false);
 }
 
-function renderSessionsList(sessions, fromCloud) {
-  document.getElementById('parent-history').innerHTML = sessions.slice(0, 20).map(s => `
+function renderSessionsList(sessions,fromCloud){
+  document.getElementById('parent-history').innerHTML=sessions.slice(0,20).map(s=>`
     <div class="history-item">
       <div class="history-date">📅 ${s['Date']||'—'}${fromCloud?' <span style="color:var(--green);font-size:.7rem">☁️</span>':''}</div>
       <div class="history-scores">
         <div class="history-score">📚 ${s['Matière Bloc1']||'—'} : <strong>${s['Score Bloc1 /10']!==''?s['Score Bloc1 /10']+'/10':'N/A'}</strong></div>
         <div class="history-score">🏆 ${s['Matière Bloc2']||'—'} : <strong>${s['Score Bloc2 /5']!==''?s['Score Bloc2 /5']+'/5':'N/A'}</strong></div>
       </div>
-      ${s['Badges session']?`<div style="margin-top:.4rem;font-size:.78rem;color:var(--gold)">${s['Badges session']}</div>`:''}
-    </div>`).join('');
+      ${s['Badges session']?`<div style="margin-top:.4rem;font-size:.78rem;color:var(--gold)">${s['Badges session']}</div>`:''}</div>`).join('');
 }
 
-async function loadRecompenses() {
-  if (!SHEETS_URL) return;
-  const result = await sheetsGet('getRecompenses');
-  if (!result?.success || !result.recompenses?.length) return;
-  document.getElementById('recomp-list').innerHTML = result.recompenses.map(r => `
-    <div class="recomp-item">
-      <div class="recomp-pts">${r.points} sessions</div>
-      <div>
-        <div style="font-weight:600">${r.nom}</div>
-        <div style="color:var(--muted);font-size:.8rem;margin-top:.1rem">${r.description}</div>
-      </div>
-    </div>`).join('');
+async function loadRecompenses(){
+  if(!SHEETS_URL)return;
+  const result=await sheetsGet('getRecompenses');
+  if(!result?.success||!result.recompenses?.length)return;
+  document.getElementById('recomp-list').innerHTML=result.recompenses.map(r=>`
+    <div class="recomp-item"><div class="recomp-pts">${r.points} sessions</div>
+    <div><div style="font-weight:600">${r.nom}</div>
+    <div style="color:var(--muted);font-size:.8rem;margin-top:.1rem">${r.description}</div></div></div>`).join('');
 }
 </script>
 </body>
