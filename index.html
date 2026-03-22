@@ -1115,6 +1115,65 @@
 </div>
 
 <script>
+
+// ══════════════════════════════════════════════
+//  RESSOURCES PAR MATIÈRE
+// ══════════════════════════════════════════════
+const RESSOURCES = {
+  'Maths': [
+    { label: '📺 Yvan Monka — Maths au lycée', url: 'https://www.youtube.com/@Yvmonka' },
+    { label: '📺 Professeur Peignot', url: 'https://www.youtube.com/@ProfesseurPeignot' },
+    { label: '📄 Annales Brevet Maths', url: 'https://www.annales2maths.com/brevet/' },
+  ],
+  'Français': [
+    { label: '📺 Alloprof — Français', url: 'https://www.youtube.com/@alloprof' },
+    { label: '📺 Linguisticae', url: 'https://www.youtube.com/@Linguisticae' },
+    { label: '📄 Bescherelle en ligne', url: 'https://bescherelle.com/' },
+  ],
+  'Histoire-Géo': [
+    { label: '📺 Les Bons Profs — Histoire', url: 'https://www.youtube.com/@LesBonsProfs' },
+    { label: '📺 Nota Bene', url: 'https://www.youtube.com/@NotaBene' },
+    { label: '📄 Géoconfluences', url: 'https://geoconfluences.ens-lyon.fr/' },
+  ],
+  'SVT': [
+    { label: '📺 Les Bons Profs — SVT', url: 'https://www.youtube.com/@LesBonsProfs' },
+    { label: '📺 Science étonnante', url: 'https://www.youtube.com/@ScienceEtonnante' },
+    { label: '📄 SVT au collège', url: 'https://www.svt-monde.org/' },
+  ],
+  'Physique-Chimie': [
+    { label: '📺 E=M6 Physique-Chimie', url: 'https://www.youtube.com/@LesBonsProfs' },
+    { label: '📺 Seb la Frite', url: 'https://www.youtube.com/@SeblaFrite' },
+    { label: '📄 Physique Chimie au collège', url: 'https://phychim.ac-versailles.fr/' },
+  ],
+  'Anglais': [
+    { label: '📺 English with Lucy', url: 'https://www.youtube.com/@EnglishwithLucy' },
+    { label: '📺 BBC Learning English', url: 'https://www.youtube.com/@bbclearningenglish' },
+    { label: '🎮 Duolingo', url: 'https://www.duolingo.com/' },
+  ],
+  'EMC': [
+    { label: '📺 Les Bons Profs — EMC', url: 'https://www.youtube.com/@LesBonsProfs' },
+    { label: '📄 Vie publique', url: 'https://www.vie-publique.fr/' },
+    { label: '📄 Lumni Éducation', url: 'https://www.lumni.fr/college' },
+  ],
+};
+
+function getRessourcesHTML(matiere) {
+  const res = RESSOURCES[matiere];
+  if (!res) return '';
+  return `
+    <div style="margin-top:1rem;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1rem">
+      <div style="font-family:var(--font-head);font-size:.85rem;font-weight:700;margin-bottom:.6rem;color:var(--muted)">
+        🔗 Ressources utiles pour ${matiere}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.4rem">
+        ${res.map(r => `<a href="${r.url}" target="_blank" rel="noopener"
+          style="color:var(--accent);font-size:.82rem;text-decoration:none;display:flex;align-items:center;gap:.4rem;padding:.3rem .5rem;border-radius:6px;transition:background .2s"
+          onmouseover="this.style.background='rgba(108,99,255,.1)'"
+          onmouseout="this.style.background='none'">${r.label}</a>`).join('')}
+      </div>
+    </div>`;
+}
+
 // ══════════════════════════════════════════════
 //  CONFIG — clé stockée dans le navigateur
 // ══════════════════════════════════════════════
@@ -1163,6 +1222,14 @@ function saveApiKey() {
   CLAUDE_API_KEY = key;
   localStorage.setItem('claude_api_key', key);
   showScreen('screen-welcome');
+}
+
+function confirmQuit() {
+  if (confirm('Abandonner la session en cours ?\nLes données ne seront pas sauvegardées.')) {
+    clearInterval(STATE.timerInterval);
+    Object.assign(STATE, { step:0, bloc1Subject:'', bloc2Subject:'', chatHistory:[], bloc1Score:null, bloc2Score:null, sessionBadges:[], sessionDate: new Date().toLocaleDateString('fr-FR') });
+    showScreen('screen-welcome');
+  }
 }
 
 function openApiSettings() {
@@ -1315,6 +1382,11 @@ async function startBloc1() {
   updateProgress(3); STATE.step=2; STATE.chatHistory=[];
   renderChatUI('💬',`📚 Bloc 1 — ${STATE.bloc1Subject}`,'30 min · Cours + Révision + Exercice');
   startTimer(30*60);
+  // Afficher ressources
+  setTimeout(() => {
+    const el = document.getElementById('ressources-area');
+    if (el) el.innerHTML = getRessourcesHTML(STATE.bloc1Subject);
+  }, 100);
   STATE.chatHistory=[{role:'user',content:`MATIÈRE : ${STATE.bloc1Subject}\nDEVOIRS : ${desc}\n\nLance la session :\n1. 📘 RAPPEL DE COURS\n2. 🔁 3 questions révision (une à la fois)\n3. ✏️ Exercice noté sur 10\n\nCommence par le RAPPEL DE COURS.`}];
   await callClaude();
 }
@@ -1340,6 +1412,10 @@ async function startBloc2(subject,icon) {
   updateProgress(5); STATE.step=4; STATE.chatHistory=[];
   renderChatUI(icon,`🏆 Bloc 2 — ${subject}`,'30 min · Fiche + Quiz + Mini-épreuve');
   startTimer(30*60);
+  setTimeout(() => {
+    const el = document.getElementById('ressources-area');
+    if (el) el.innerHTML = getRessourcesHTML(subject);
+  }, 100);
   STATE.chatHistory=[{role:'user',content:`BLOC 2 — RÉVISION BREVET\nMATIÈRE : ${subject}\n\nLance :\n1. 📋 FICHE DE RÉVISION\n2. 🧠 QUIZ BREVET (5 questions une à la fois)\n3. 📝 MINI-ÉPREUVE avec barème\n\nCommence par la FICHE DE RÉVISION.`}];
   await callClaude();
 }
@@ -1349,6 +1425,7 @@ function renderChatUI(icon,title,desc) {
   document.getElementById('main-content').innerHTML=`
     <div class="step-header"><div class="step-icon icon-purple">${icon}</div>
     <div><div class="step-title">${title}</div><div class="step-desc">${desc}</div></div></div>
+    <div id="ressources-area"></div>
     <div class="timer-bar"><span class="timer-icon">⏱️</span>
     <div class="timer-track"><div class="timer-fill" id="timer-fill" style="width:100%"></div></div>
     <span class="timer-text" id="timer-text">30:00</span></div>
@@ -1357,6 +1434,11 @@ function renderChatUI(icon,title,desc) {
       <textarea class="input-area" id="chat-input" placeholder="Ta réponse..." rows="1"
         onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
       <button class="btn-send" id="send-btn" onclick="sendMessage()">➤</button>
+    </div>
+    <div style="text-align:center;padding:.5rem 0 1rem">
+      <button onclick="confirmQuit()" style="background:none;border:none;color:var(--muted);font-size:.78rem;cursor:pointer;text-decoration:underline">
+        ✕ Abandonner la session
+      </button>
     </div>`;
 }
 
