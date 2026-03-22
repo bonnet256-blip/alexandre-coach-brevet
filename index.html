@@ -970,14 +970,15 @@
 </div>
 
 <script>
-// ═══════════════════════════════════════════════
-//  CONFIG GOOGLE SHEETS
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════
+//  CONFIG — METS TA CLÉ API ICI
+// ══════════════════════════════════════════════
+const CLAUDE_API_KEY = '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';
 let SHEETS_URL = localStorage.getItem('sheets_url') || '';
 
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  STATE
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════
 const STATE = {
   step: 0,
   bloc1Subject: '',
@@ -994,13 +995,13 @@ const STATE = {
 };
 
 const SUBJECTS = [
-  { id: 'math', label: 'Maths',          icon: '📐' },
-  { id: 'fr',   label: 'Français',       icon: '📖' },
-  { id: 'hg',   label: 'Histoire-Géo',   icon: '🌍' },
-  { id: 'svt',  label: 'SVT',            icon: '🌿' },
-  { id: 'pc',   label: 'Physique-Chimie',icon: '⚗️' },
-  { id: 'en',   label: 'Anglais',        icon: '🇬🇧' },
-  { id: 'emc',  label: 'EMC',            icon: '⚖️' },
+  { id: 'math', label: 'Maths',           icon: '📐' },
+  { id: 'fr',   label: 'Français',        icon: '📖' },
+  { id: 'hg',   label: 'Histoire-Géo',    icon: '🌍' },
+  { id: 'svt',  label: 'SVT',             icon: '🌿' },
+  { id: 'pc',   label: 'Physique-Chimie', icon: '⚗️' },
+  { id: 'en',   label: 'Anglais',         icon: '🇬🇧' },
+  { id: 'emc',  label: 'EMC',             icon: '⚖️' },
 ];
 
 const PARENT_PASSWORD = 'alexandre2024';
@@ -1015,13 +1016,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ══════════════════════════════════════════════
-//  GOOGLE SHEETS — SYNC
+//  GOOGLE SHEETS
 // ══════════════════════════════════════════════
 function updateSyncBadge(status) {
   const el = document.getElementById('sync-status');
   if (!el) return;
   if (!SHEETS_URL) { el.className = 'sync-status sync-off'; el.textContent = '☁️ Sheets'; return; }
-  if (status === 'ok')   { el.className = 'sync-status sync-ok';   el.textContent = '✅ Sheets'; STATE.sheetsConnected = true; }
+  if (status === 'ok')        { el.className = 'sync-status sync-ok';   el.textContent = '✅ Sheets'; STATE.sheetsConnected = true; }
   else if (status === 'err')  { el.className = 'sync-status sync-err';  el.textContent = '❌ Sheets'; STATE.sheetsConnected = false; }
   else if (status === 'wait') { el.className = 'sync-status sync-wait'; el.textContent = '⏳ Sync…'; }
   else                        { el.className = 'sync-status sync-wait'; el.textContent = '☁️ Sheets'; }
@@ -1033,12 +1034,7 @@ async function sheetsCall(action, data) {
     updateSyncBadge('wait');
     const res = await fetch(SHEETS_URL, {
       method: 'POST',
-     headers: { 
-  'Content-Type': 'application/json',
-  'x-api-key': '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',
-  'anthropic-version': '2023-06-01',
-  'anthropic-dangerous-direct-browser-access': 'true'
-},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action, data })
     });
     const json = await res.json();
@@ -1057,7 +1053,6 @@ async function sheetsGet(action) {
   } catch(e) { updateSyncBadge('err'); return null; }
 }
 
-// ── SETUP MODAL ──
 function openSetupModal() {
   document.getElementById('setup-modal').classList.remove('hidden');
   document.getElementById('sheets-url-input').value = SHEETS_URL;
@@ -1071,7 +1066,7 @@ async function saveAndTestSheetsUrl() {
   resultEl.style.display = 'block';
   resultEl.innerHTML = '<span style="color:#fbbf24">⏳ Test en cours...</span>';
   if (!url.startsWith('https://script.google.com/macros/')) {
-    resultEl.innerHTML = '<span style="color:#f87171">❌ URL invalide — doit commencer par https://script.google.com/macros/</span>';
+    resultEl.innerHTML = '<span style="color:#f87171">❌ URL invalide</span>';
     return;
   }
   SHEETS_URL = url;
@@ -1088,13 +1083,13 @@ async function saveAndTestSheetsUrl() {
       updateSyncBadge('err');
     }
   } catch(e) {
-    resultEl.innerHTML = '<span style="color:#f87171">❌ Impossible de contacter le script. Vérifie le déploiement (accès : Tout le monde).</span>';
+    resultEl.innerHTML = '<span style="color:#f87171">❌ Impossible de contacter le script.</span>';
     updateSyncBadge('err');
   }
 }
 
 // ══════════════════════════════════════════════
-//  SCREEN NAV
+//  NAVIGATION
 // ══════════════════════════════════════════════
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -1120,7 +1115,7 @@ function checkParentPW() {
 }
 
 // ══════════════════════════════════════════════
-//  PROGRESS STEPS
+//  PROGRESS
 // ══════════════════════════════════════════════
 function updateProgress(activeStep) {
   for (let i = 1; i <= 6; i++) {
@@ -1137,7 +1132,7 @@ function updateProgress(activeStep) {
 }
 
 // ══════════════════════════════════════════════
-//  STEP 0 — SUJET
+//  ETAPE 0 — CHOIX MATIÈRE
 // ══════════════════════════════════════════════
 function renderStep0() {
   updateProgress(1);
@@ -1164,7 +1159,7 @@ function selectSubject(id, label, icon) {
 }
 
 // ══════════════════════════════════════════════
-//  STEP 1 — DEVOIRS
+//  ETAPE 1 — DESCRIPTION DEVOIRS
 // ══════════════════════════════════════════════
 function renderStep1(subject, icon) {
   updateProgress(2);
@@ -1175,7 +1170,7 @@ function renderStep1(subject, icon) {
       <div class="step-desc">Décris ce que tu as à faire...</div></div>
     </div>
     <div class="card">
-      <textarea class="input-area" id="hw-desc" placeholder="Ex: contrôle sur les équations, je comprends pas comment isoler x..." rows="4"></textarea>
+      <textarea class="input-area" id="hw-desc" placeholder="Ex: contrôle sur les équations demain, je comprends pas comment isoler x..." rows="4"></textarea>
       <div style="display:flex;gap:.75rem;margin-top:1rem;justify-content:flex-end">
         <button class="btn-secondary" onclick="renderStep0()">← Changer</button>
         <button class="btn-primary" onclick="startBloc1()">C'est parti ! 🚀</button>
@@ -1192,13 +1187,13 @@ async function startBloc1() {
   updateProgress(3); STATE.step = 2; STATE.chatHistory = [];
   renderChatUI('💬', `📚 Bloc 1 — ${STATE.bloc1Subject}`, '30 min · Cours + Révision + Exercice');
   startTimer(30*60);
-  const userMsg = `MATIÈRE : ${STATE.bloc1Subject}\nDEVOIRS DU JOUR : ${desc}\n\nLance immédiatement la session avec :\n1. 📘 RAPPEL DE COURS sur la notion\n2. 🔁 3 questions de révision guidée (une à la fois)\n3. ✏️ Un exercice d'application noté sur 10\n\nCommence par le RAPPEL DE COURS maintenant.`;
+  const userMsg = `MATIÈRE : ${STATE.bloc1Subject}\nDEVOIRS DU JOUR : ${desc}\n\nLance la session avec :\n1. 📘 RAPPEL DE COURS sur la notion\n2. 🔁 3 questions de révision guidée (une à la fois)\n3. ✏️ Un exercice d'application noté sur 10\n\nCommence par le RAPPEL DE COURS maintenant.`;
   STATE.chatHistory = [{ role:'user', content: userMsg }];
   await callClaude();
 }
 
 // ══════════════════════════════════════════════
-//  TRANSITION
+//  TRANSITION BLOC 1 → BLOC 2
 // ══════════════════════════════════════════════
 function showTransition() {
   clearInterval(STATE.timerInterval);
@@ -1226,13 +1221,13 @@ async function startBloc2(subject, icon) {
   updateProgress(5); STATE.step = 4; STATE.chatHistory = [];
   renderChatUI(icon, `🏆 Bloc 2 — ${subject}`, '30 min · Fiche + Quiz + Mini-épreuve');
   startTimer(30*60);
-  const userMsg = `BLOC 2 — RÉVISION BREVET\nMATIÈRE : ${subject}\n\nLance :\n1. 📋 FICHE DE RÉVISION (notion clé 3ème)\n2. 🧠 QUIZ BREVET (5 questions, une à la fois)\n3. 📝 MINI-ÉPREUVE (1 exercice Brevet avec barème)\n\nCommence par la FICHE DE RÉVISION.`;
+  const userMsg = `BLOC 2 — RÉVISION BREVET\nMATIÈRE : ${subject}\n\nLance :\n1. 📋 FICHE DE RÉVISION (notion clé du programme 3ème)\n2. 🧠 QUIZ BREVET (5 questions style Brevet, une à la fois)\n3. 📝 MINI-ÉPREUVE (1 exercice Brevet avec barème)\n\nCommence par la FICHE DE RÉVISION.`;
   STATE.chatHistory = [{ role:'user', content: userMsg }];
   await callClaude();
 }
 
 // ══════════════════════════════════════════════
-//  CHAT UI HELPER
+//  CHAT UI
 // ══════════════════════════════════════════════
 function renderChatUI(icon, title, desc) {
   document.getElementById('main-content').innerHTML = `
@@ -1254,32 +1249,34 @@ function renderChatUI(icon, title, desc) {
 }
 
 // ══════════════════════════════════════════════
-//  SESSION END + SHEETS SYNC
+//  FIN DE SESSION + SYNC SHEETS
 // ══════════════════════════════════════════════
 async function showSessionEnd() {
   clearInterval(STATE.timerInterval);
   updateProgress(6); STATE.step = 5;
   checkBadges();
 
-  const sessionData = { date: STATE.sessionDate, bloc1:{ matiere: STATE.bloc1Subject, score: STATE.bloc1Score }, bloc2:{ matiere: STATE.bloc2Subject, score: STATE.bloc2Score }, badges: STATE.sessionBadges };
+  const sessionData = {
+    date: STATE.sessionDate,
+    bloc1: { matiere: STATE.bloc1Subject, score: STATE.bloc1Score },
+    bloc2: { matiere: STATE.bloc2Subject, score: STATE.bloc2Score },
+    badges: STATE.sessionBadges
+  };
   STATE.sessions.push(sessionData);
   localStorage.setItem('alex_sessions', JSON.stringify(STATE.sessions));
   localStorage.setItem('alex_badges', STATE.badgeCount);
 
   const payload = buildSessionPayload();
 
-  // Synchro Sheets
   let syncMsg = '';
   if (SHEETS_URL) {
     updateSyncBadge('wait');
     const result = await sheetsCall('saveSession', payload);
-    if (result?.success) {
-      syncMsg = `<div class="cloud-indicator" style="justify-content:center;margin:1rem 0"><span>✅</span><span>Session #${result.sessionNumber} sauvegardée dans Google Sheets</span></div>`;
-    } else {
-      syncMsg = `<div class="cloud-indicator" style="justify-content:center;margin:1rem 0;border-color:rgba(248,113,113,.3)"><span>⚠️</span><span>Sauvegarde locale uniquement (Sheets indisponible)</span></div>`;
-    }
+    syncMsg = result?.success
+      ? `<div class="cloud-indicator" style="justify-content:center;margin:1rem 0"><span>✅</span><span>Session #${result.sessionNumber} sauvegardée dans Google Sheets</span></div>`
+      : `<div class="cloud-indicator" style="justify-content:center;margin:1rem 0;border-color:rgba(248,113,113,.3)"><span>⚠️</span><span>Sauvegarde locale uniquement</span></div>`;
   } else {
-    syncMsg = `<div class="cloud-indicator" style="justify-content:center;margin:1rem 0"><span>💾</span><span>Données sauvegardées localement · <a href="#" onclick="openSetupModal();return false" style="color:var(--accent)">Configurer Google Sheets</a></span></div>`;
+    syncMsg = `<div class="cloud-indicator" style="justify-content:center;margin:1rem 0"><span>💾</span><span>Données locales · <a href="#" onclick="openSetupModal();return false" style="color:var(--accent)">Configurer Google Sheets</a></span></div>`;
   }
 
   document.getElementById('main-content').innerHTML = `
@@ -1294,7 +1291,8 @@ async function showSessionEnd() {
         <div class="stat-box"><div class="stat-num">${STATE.sessions.length}</div><div class="stat-label">Sessions totales</div></div>
         <div class="stat-box"><div class="stat-num">${STATE.badgeCount}</div><div class="stat-label">Badges gagnés</div></div>
       </div>
-      ${STATE.sessionBadges.length > 0 ? `<p style="font-family:var(--font-head);font-weight:700;margin-bottom:.75rem">🎖️ Badges débloqués !</p>
+      ${STATE.sessionBadges.length > 0 ? `
+        <p style="font-family:var(--font-head);font-weight:700;margin-bottom:.75rem">🎖️ Badges débloqués !</p>
         <div class="badges-row">${STATE.sessionBadges.map(b=>`<div class="badge-chip">${b}</div>`).join('')}</div>` : ''}
       <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem">
         <button class="btn-primary" onclick="newSession()">🔄 Nouvelle session</button>
@@ -1318,7 +1316,7 @@ function newSession() {
 }
 
 // ══════════════════════════════════════════════
-//  CLAUDE API
+//  CLAUDE API — CLÉ AU BON ENDROIT
 // ══════════════════════════════════════════════
 function getSystemPrompt() {
   return `Tu es un assistant pédagogique expert pour élèves de 3ème. Tu t'adresses à Alexandre, 14 ans.
@@ -1348,27 +1346,39 @@ async function callClaude() {
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, system: getSystemPrompt(), messages: STATE.chatHistory })
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': CLAUDE_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1500,
+        system: getSystemPrompt(),
+        messages: STATE.chatHistory
+      })
     });
+
     const data = await res.json();
     const text = data.content?.[0]?.text || 'Désolé, une erreur est survenue.';
     loadingEl.remove();
 
     let displayText = text;
-    let bloc1Done = text.includes('###BLOC1_COMPLETE###');
-    let bloc2Done = text.includes('###BLOC2_COMPLETE###');
-    if (bloc1Done) displayText = text.replace('###BLOC1_COMPLETE###','').trim();
-    if (bloc2Done) displayText = text.replace('###BLOC2_COMPLETE###','').trim();
+    const bloc1Done = text.includes('###BLOC1_COMPLETE###');
+    const bloc2Done = text.includes('###BLOC2_COMPLETE###');
+    if (bloc1Done) displayText = text.replace('###BLOC1_COMPLETE###', '').trim();
+    if (bloc2Done) displayText = text.replace('###BLOC2_COMPLETE###', '').trim();
 
     const scoreMatch = displayText.match(/SCORE\s*:\s*(\d+)\s*\/\s*(10|5)/i);
     if (scoreMatch) {
-      const [,score,max] = scoreMatch;
-      if (max==='10') STATE.bloc1Score = parseInt(score);
-      if (max==='5')  STATE.bloc2Score = parseInt(score);
+      const [, score, max] = scoreMatch;
+      if (max === '10') STATE.bloc1Score = parseInt(score);
+      if (max === '5')  STATE.bloc2Score = parseInt(score);
     }
 
-    STATE.chatHistory.push({ role:'assistant', content: text });
+    STATE.chatHistory.push({ role: 'assistant', content: text });
+
     const msgEl = document.createElement('div');
     msgEl.className = 'msg msg-ai';
     msgEl.innerHTML = formatAIText(displayText);
@@ -1377,8 +1387,10 @@ async function callClaude() {
 
     if (bloc1Done) setTimeout(() => showTransition(), 1200);
     else if (bloc2Done) setTimeout(() => showSessionEnd(), 1200);
+
   } catch(e) {
-    loadingEl.innerHTML = `<p style="color:var(--accent2)">⚠️ Erreur de connexion.</p>`;
+    loadingEl.innerHTML = `<p style="color:var(--accent2)">⚠️ Erreur de connexion : ${e.message}</p>`;
+    console.error(e);
   }
   if (sendBtn) sendBtn.disabled = false;
 }
@@ -1395,12 +1407,12 @@ async function sendMessage() {
   chatArea.appendChild(userEl);
   chatArea.scrollTop = chatArea.scrollHeight;
   input.value = '';
-  STATE.chatHistory.push({ role:'user', content: text });
+  STATE.chatHistory.push({ role: 'user', content: text });
   await callClaude();
 }
 
 // ══════════════════════════════════════════════
-//  FORMAT AI TEXT
+//  FORMATTAGE RÉPONSE IA
 // ══════════════════════════════════════════════
 function formatAIText(text) {
   let html = text
@@ -1425,13 +1437,13 @@ function startTimer(totalSeconds) {
   STATE.timerInterval = setInterval(() => {
     remaining--;
     if (remaining < 0) { clearInterval(STATE.timerInterval); return; }
-    const mins = Math.floor(remaining/60), secs = remaining%60;
+    const mins = Math.floor(remaining / 60), secs = remaining % 60;
     const timerText = document.getElementById('timer-text');
     const timerFill = document.getElementById('timer-fill');
-    if (timerText) timerText.textContent = `${mins}:${secs.toString().padStart(2,'0')}`;
+    if (timerText) timerText.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
     if (timerFill) {
-      const pct = (remaining/totalSeconds)*100;
-      timerFill.style.width = pct+'%';
+      const pct = (remaining / totalSeconds) * 100;
+      timerFill.style.width = pct + '%';
       if (pct < 20) timerFill.style.background = 'var(--accent2)';
     }
   }, 1000);
@@ -1449,11 +1461,11 @@ function checkBadges() {
     const cnt = STATE.sessions.filter(s => s.bloc1?.matiere === STATE.bloc1Subject && s.bloc1?.score >= 8).length;
     if (cnt >= 4) addBadge(`🏆 Expert ${STATE.bloc1Subject}`);
   }
-  if (total >= 10 && !hasBadge('📚 Studieux')) addBadge('📚 Studieux');
-  if (total >= 3  && !hasBadge('🔥 Série x3')) addBadge('🔥 Série x3');
-  if (total >= 7  && !hasBadge('🔥🔥 Série x7')) addBadge('🔥🔥 Série x7');
-  if (total >= 20 && !hasBadge('🎯 Brevet Ready')) addBadge('🎯 Brevet Ready');
-  if (total >= 30 && !hasBadge('💪 Persévérant')) addBadge('💪 Persévérant');
+  if (total >= 10 && !hasBadge('📚 Studieux'))       addBadge('📚 Studieux');
+  if (total >= 3  && !hasBadge('🔥 Série x3'))       addBadge('🔥 Série x3');
+  if (total >= 7  && !hasBadge('🔥🔥 Série x7'))     addBadge('🔥🔥 Série x7');
+  if (total >= 20 && !hasBadge('🎯 Brevet Ready'))   addBadge('🎯 Brevet Ready');
+  if (total >= 30 && !hasBadge('💪 Persévérant'))    addBadge('💪 Persévérant');
 }
 
 function addBadge(badge) {
@@ -1473,7 +1485,7 @@ function showBadgeToast(badge) {
 }
 
 // ══════════════════════════════════════════════
-//  BUILD PAYLOAD
+//  PAYLOAD SESSION
 // ══════════════════════════════════════════════
 function buildSessionPayload() {
   return {
@@ -1487,48 +1499,52 @@ function buildSessionPayload() {
 }
 
 // ══════════════════════════════════════════════
-//  PARENT DASHBOARD
+//  ESPACE PARENTS
 // ══════════════════════════════════════════════
 async function refreshParentData() {
   const icon = document.getElementById('parent-cloud-icon');
-  const text = document.getElementById('parent-cloud-text');
+  const txt  = document.getElementById('parent-cloud-text');
   if (icon) icon.textContent = '⏳';
-  if (text) text.textContent = 'Chargement...';
+  if (txt)  txt.textContent  = 'Chargement...';
 
   if (SHEETS_URL) {
     const result = await sheetsGet('getSessions');
     if (result?.success && result.sessions?.length) {
       renderSessionsList(result.sessions, true);
       if (icon) icon.textContent = '☁️';
-      if (text) text.textContent = `${result.sessions.length} sessions dans Google Sheets`;
+      if (txt)  txt.textContent  = `${result.sessions.length} sessions dans Google Sheets`;
     } else {
       renderLocalHistory();
       if (icon) icon.textContent = '⚠️';
-      if (text) text.textContent = 'Sheets indisponible — données locales';
+      if (txt)  txt.textContent  = 'Sheets indisponible — données locales';
     }
     loadRecompenses();
   } else {
     renderLocalHistory();
     if (icon) icon.textContent = '💾';
-    if (text) text.textContent = 'Données locales · Configurer Sheets pour le cloud';
+    if (txt)  txt.textContent  = 'Données locales · Configurer Sheets pour le cloud';
   }
 }
 
 function renderLocalHistory() {
   if (!STATE.sessions.length) {
-    document.getElementById('parent-history').innerHTML = '<p style="color:var(--muted);text-align:center;font-size:.88rem">Aucune session.</p>';
+    document.getElementById('parent-history').innerHTML =
+      '<p style="color:var(--muted);text-align:center;font-size:.88rem">Aucune session.</p>';
     return;
   }
   const mapped = [...STATE.sessions].reverse().map(s => ({
-    'Date': s.date, 'Matière Bloc1': s.bloc1?.matiere||'—',
-    'Score Bloc1 /10': s.bloc1?.score??'', 'Matière Bloc2': s.bloc2?.matiere||'—',
-    'Score Bloc2 /5': s.bloc2?.score??'', 'Badges session': (s.badges||[]).join(', ')
+    'Date': s.date,
+    'Matière Bloc1': s.bloc1?.matiere || '—',
+    'Score Bloc1 /10': s.bloc1?.score ?? '',
+    'Matière Bloc2': s.bloc2?.matiere || '—',
+    'Score Bloc2 /5': s.bloc2?.score ?? '',
+    'Badges session': (s.badges || []).join(', ')
   }));
   renderSessionsList(mapped, false);
 }
 
 function renderSessionsList(sessions, fromCloud) {
-  document.getElementById('parent-history').innerHTML = sessions.slice(0,20).map(s => `
+  document.getElementById('parent-history').innerHTML = sessions.slice(0, 20).map(s => `
     <div class="history-item">
       <div class="history-date">📅 ${s['Date']||'—'}${fromCloud?' <span style="color:var(--green);font-size:.7rem">☁️</span>':''}</div>
       <div class="history-scores">
@@ -1546,8 +1562,10 @@ async function loadRecompenses() {
   document.getElementById('recomp-list').innerHTML = result.recompenses.map(r => `
     <div class="recomp-item">
       <div class="recomp-pts">${r.points} sessions</div>
-      <div><div style="font-weight:600">${r.nom}</div>
-      <div style="color:var(--muted);font-size:.8rem;margin-top:.1rem">${r.description}</div></div>
+      <div>
+        <div style="font-weight:600">${r.nom}</div>
+        <div style="color:var(--muted);font-size:.8rem;margin-top:.1rem">${r.description}</div>
+      </div>
     </div>`).join('');
 }
 </script>
