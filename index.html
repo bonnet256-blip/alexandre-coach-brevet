@@ -1033,7 +1033,12 @@ async function sheetsCall(action, data) {
     updateSyncBadge('wait');
     const res = await fetch(SHEETS_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+     headers: { 
+  'Content-Type': 'application/json',
+  'x-api-key': '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',
+  'anthropic-version': '2023-06-01',
+  'anthropic-dangerous-direct-browser-access': 'true'
+},
       body: JSON.stringify({ action, data })
     });
     const json = await res.json();
