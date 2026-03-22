@@ -635,21 +635,43 @@
     position: fixed;
     bottom: 1.5rem;
     right: 1.5rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
+    background: var(--surface2);
+    border: 1px solid rgba(108,99,255,.5);
     border-radius: 50px;
     padding: .6rem 1.2rem;
-    font-size: .78rem;
-    color: var(--muted);
+    font-size: .82rem;
+    color: var(--text);
     cursor: pointer;
     transition: all .2s;
     z-index: 50;
     display: flex;
     align-items: center;
     gap: .4rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,.5);
   }
 
   .fab-parent:hover { border-color: var(--accent); color: var(--accent); }
+
+  .fab-settings {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    background: var(--surface2);
+    border: 1px solid rgba(255,101,132,.5);
+    border-radius: 50px;
+    padding: .6rem 1.2rem;
+    font-size: .82rem;
+    color: var(--text);
+    cursor: pointer;
+    transition: all .2s;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,.5);
+  }
+
+  .fab-settings:hover { border-color: var(--accent2); color: var(--accent2); }
 
   /* RESPONSIVE */
   @media (max-width: 480px) {
@@ -887,6 +909,7 @@
 
   <!-- FAB PARENT -->
   <button class="fab-parent" onclick="showParent()">🔒 Parents</button>
+  <button class="fab-settings" onclick="openApiSettings()">⚙️ Clé API</button>
 
 </div>
 
@@ -1140,6 +1163,19 @@ function saveApiKey() {
   CLAUDE_API_KEY = key;
   localStorage.setItem('claude_api_key', key);
   showScreen('screen-welcome');
+}
+
+function openApiSettings() {
+  // Show a small modal to update the API key
+  const current = CLAUDE_API_KEY ? CLAUDE_API_KEY.substring(0,20)+'...' : 'Non configurée';
+  const newKey = prompt(`Clé API actuelle : ${current}\n\nColle ta nouvelle clé API Anthropic (sk-ant-...)`);
+  if (newKey && newKey.trim().startsWith('sk-ant-')) {
+    CLAUDE_API_KEY = newKey.trim();
+    localStorage.setItem('claude_api_key', newKey.trim());
+    alert('✅ Clé API mise à jour !');
+  } else if (newKey !== null) {
+    alert('❌ Clé invalide — doit commencer par sk-ant-');
+  }
 }
 
 // ── SHEETS ──
