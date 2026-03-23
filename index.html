@@ -3,1692 +3,874 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Alexandre — Mon Coach Brevet</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#0f0f0f">
+<title>TeamPulse — Mon Équipe</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0d0f14;
-    --surface: #161920;
-    --surface2: #1e222d;
-    --border: #2a2f3d;
-    --accent: #6c63ff;
-    --accent2: #ff6584;
-    --gold: #ffd700;
-    --green: #4ade80;
-    --text: #e8eaf0;
-    --muted: #7b8099;
-    --radius: 16px;
-    --font-head: 'Syne', sans-serif;
-    --font-body: 'DM Sans', sans-serif;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: var(--font-body);
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* ANIMATED BG */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(ellipse 80% 60% at 20% 0%, rgba(108,99,255,.12) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 40% at 80% 100%, rgba(255,101,132,.08) 0%, transparent 60%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* SCREENS */
-  .screen { display: none; position: relative; z-index: 1; }
-  .screen.active { display: flex; flex-direction: column; min-height: 100vh; }
-
-  /* ── WELCOME SCREEN ── */
-  #screen-welcome {
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    text-align: center;
-  }
-
-  .welcome-logo {
-    width: 80px; height: 80px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border-radius: 24px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 2.2rem;
-    margin: 0 auto 1.5rem;
-    box-shadow: 0 0 40px rgba(108,99,255,.4);
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 40px rgba(108,99,255,.4); }
-    50% { box-shadow: 0 0 60px rgba(108,99,255,.7); }
-  }
-
-  .welcome-title {
-    font-family: var(--font-head);
-    font-size: clamp(2rem, 6vw, 3.5rem);
-    font-weight: 800;
-    background: linear-gradient(135deg, #fff 30%, var(--accent));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1.1;
-    margin-bottom: .5rem;
-  }
-
-  .welcome-sub {
-    color: var(--muted);
-    font-size: 1.1rem;
-    margin-bottom: 2.5rem;
-  }
-
-  .day-info {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.2rem 2rem;
-    margin-bottom: 2rem;
-    font-size: .95rem;
-    color: var(--muted);
-  }
-
-  .day-info strong { color: var(--text); }
-
-  .btn-primary {
-    background: linear-gradient(135deg, var(--accent), #8b5cf6);
-    color: white;
-    border: none;
-    padding: .9rem 2.5rem;
-    border-radius: 50px;
-    font-family: var(--font-head);
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all .2s;
-    letter-spacing: .5px;
-    box-shadow: 0 4px 24px rgba(108,99,255,.35);
-  }
-
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(108,99,255,.5); }
-  .btn-primary:active { transform: translateY(0); }
-
-  .btn-secondary {
-    background: var(--surface2);
-    color: var(--text);
-    border: 1px solid var(--border);
-    padding: .7rem 1.8rem;
-    border-radius: 50px;
-    font-family: var(--font-body);
-    font-size: .9rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all .2s;
-  }
-
-  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
-
-  /* ── MAIN APP ── */
-  #screen-app {
-    flex-direction: column;
-    padding: 0;
-  }
-
-  /* TOP BAR */
-  .topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--border);
-    background: rgba(13,15,20,.9);
-    backdrop-filter: blur(12px);
-    position: sticky; top: 0; z-index: 100;
-  }
-
-  .topbar-logo {
-    font-family: var(--font-head);
-    font-weight: 800;
-    font-size: 1.1rem;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .topbar-badges {
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    font-size: .85rem;
-    color: var(--muted);
-  }
-
-  .badge-count {
-    background: linear-gradient(135deg, var(--gold), #ffaa00);
-    color: #000;
-    padding: .2rem .6rem;
-    border-radius: 20px;
-    font-weight: 700;
-    font-size: .8rem;
-  }
-
-  /* PROGRESS BAR */
-  .session-progress {
-    padding: 1rem 1.5rem .5rem;
-  }
-
-  .progress-steps {
-    display: flex;
-    gap: .5rem;
-    margin-bottom: .5rem;
-  }
-
-  .step-dot {
-    flex: 1;
-    height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    transition: background .4s;
-  }
-
-  .step-dot.done { background: var(--accent); }
-  .step-dot.active { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
-
-  .progress-label {
-    font-size: .78rem;
-    color: var(--muted);
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .bloc-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: .4rem;
-    padding: .3rem .8rem;
-    border-radius: 20px;
-    font-size: .78rem;
-    font-weight: 600;
-    font-family: var(--font-head);
-    letter-spacing: .3px;
-  }
-
-  .bloc1-badge { background: rgba(108,99,255,.15); color: var(--accent); border: 1px solid rgba(108,99,255,.3); }
-  .bloc2-badge { background: rgba(255,101,132,.15); color: var(--accent2); border: 1px solid rgba(255,101,132,.3); }
-
-  /* CONTENT AREA */
-  .content-area {
-    flex: 1;
-    padding: 1.5rem;
-    max-width: 800px;
-    margin: 0 auto;
-    width: 100%;
-  }
-
-  /* STEP HEADER */
-  .step-header {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .step-icon {
-    width: 48px; height: 48px;
-    border-radius: 14px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.4rem;
-    flex-shrink: 0;
-  }
-
-  .icon-purple { background: rgba(108,99,255,.2); }
-  .icon-pink { background: rgba(255,101,132,.2); }
-  .icon-gold { background: rgba(255,215,0,.15); }
-  .icon-green { background: rgba(74,222,128,.15); }
-
-  .step-title {
-    font-family: var(--font-head);
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-bottom: .2rem;
-  }
-
-  .step-desc {
-    font-size: .88rem;
-    color: var(--muted);
-    line-height: 1.5;
-  }
-
-  /* CARDS */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    transition: border-color .2s;
-  }
-
-  .card:hover { border-color: rgba(108,99,255,.4); }
-
-  /* SUBJECT SELECTOR */
-  .subject-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: .75rem;
-    margin-bottom: 1.25rem;
-  }
-
-  .subject-btn {
-    background: var(--surface2);
-    border: 2px solid var(--border);
-    border-radius: 12px;
-    padding: .8rem .5rem;
-    text-align: center;
-    cursor: pointer;
-    transition: all .2s;
-    font-family: var(--font-body);
-    color: var(--text);
-    font-size: .85rem;
-    font-weight: 500;
-  }
-
-  .subject-btn .subj-icon { font-size: 1.5rem; display: block; margin-bottom: .3rem; }
-  .subject-btn:hover { border-color: var(--accent); transform: translateY(-2px); }
-  .subject-btn.selected { border-color: var(--accent); background: rgba(108,99,255,.15); color: var(--accent); }
-
-  /* TEXTAREA */
-  .input-area {
-    width: 100%;
-    background: var(--surface2);
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    padding: 1rem;
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: .95rem;
-    resize: vertical;
-    min-height: 100px;
-    transition: border-color .2s;
-    line-height: 1.6;
-  }
-
-  .input-area:focus { outline: none; border-color: var(--accent); }
-  .input-area::placeholder { color: var(--muted); }
-
-  /* CHAT MESSAGES */
-  .chat-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
-
-  .msg {
-    max-width: 100%;
-    animation: msgIn .3s ease;
-  }
-
-  @keyframes msgIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .msg-ai {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px 16px 16px 4px;
-    padding: 1.2rem 1.5rem;
-    font-size: .95rem;
-    line-height: 1.7;
-  }
-
-  .msg-ai h3 {
-    font-family: var(--font-head);
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--accent);
-    margin: 1rem 0 .4rem;
-    display: flex;
-    align-items: center;
-    gap: .4rem;
-  }
-
-  .msg-ai h3:first-child { margin-top: 0; }
-
-  .msg-ai p { margin-bottom: .6rem; }
-  .msg-ai p:last-child { margin-bottom: 0; }
-
-  .msg-ai ul, .msg-ai ol {
-    padding-left: 1.5rem;
-    margin: .4rem 0;
-  }
-
-  .msg-ai li { margin-bottom: .3rem; }
-
-  .msg-ai strong { color: var(--text); font-weight: 600; }
-
-  .msg-ai .highlight {
-    background: rgba(108,99,255,.12);
-    border-left: 3px solid var(--accent);
-    padding: .8rem 1rem;
-    border-radius: 0 8px 8px 0;
-    margin: .8rem 0;
-  }
-
-  .msg-user {
-    background: linear-gradient(135deg, rgba(108,99,255,.2), rgba(108,99,255,.1));
-    border: 1px solid rgba(108,99,255,.3);
-    border-radius: 16px 16px 4px 16px;
-    padding: .8rem 1.2rem;
-    font-size: .9rem;
-    align-self: flex-end;
-    max-width: 85%;
-    margin-left: auto;
-  }
-
-  /* SCORE DISPLAY */
-  .score-display {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1rem 1.5rem;
-    margin: 1rem 0;
-  }
-
-  .score-circle {
-    width: 60px; height: 60px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-head);
-    font-size: 1.4rem;
-    font-weight: 800;
-    flex-shrink: 0;
-  }
-
-  .score-high { background: rgba(74,222,128,.15); color: var(--green); border: 2px solid var(--green); }
-  .score-mid { background: rgba(251,191,36,.15); color: #fbbf24; border: 2px solid #fbbf24; }
-  .score-low { background: rgba(248,113,113,.15); color: #f87171; border: 2px solid #f87171; }
-
-  /* BADGE TOAST */
-  .badge-toast {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: linear-gradient(135deg, #1a1d28, #222636);
-    border: 1px solid var(--gold);
-    border-radius: 16px;
-    padding: 1rem 2rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    z-index: 1000;
-    transition: transform .4s cubic-bezier(.34,1.56,.64,1);
-    box-shadow: 0 8px 32px rgba(255,215,0,.2);
-    max-width: 90vw;
-  }
-
-  .badge-toast.show { transform: translateX(-50%) translateY(0); }
-  .badge-toast-icon { font-size: 2rem; }
-  .badge-toast-text { font-family: var(--font-head); font-weight: 700; font-size: .95rem; }
-  .badge-toast-sub { font-size: .78rem; color: var(--muted); margin-top: .1rem; }
-
-  /* TIMER */
-  .timer-bar {
-    display: flex;
-    align-items: center;
-    gap: .75rem;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: .6rem 1rem;
-    margin-bottom: 1rem;
-    font-size: .85rem;
-  }
-
-  .timer-icon { font-size: 1rem; }
-  .timer-track { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  .timer-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; transition: width 1s linear; }
-  .timer-text { color: var(--muted); font-weight: 500; min-width: 50px; text-align: right; }
-
-  /* INPUT ROW */
-  .input-row {
-    display: flex;
-    gap: .75rem;
-    align-items: flex-end;
-    position: sticky;
-    bottom: 0;
-    background: linear-gradient(to top, var(--bg) 70%, transparent);
-    padding: 1rem 0 .5rem;
-  }
-
-  .input-row .input-area {
-    min-height: 50px;
-    max-height: 150px;
-    flex: 1;
-  }
-
-  .btn-send {
-    width: 48px; height: 48px;
-    background: linear-gradient(135deg, var(--accent), #8b5cf6);
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.2rem;
-    transition: all .2s;
-    flex-shrink: 0;
-    box-shadow: 0 4px 16px rgba(108,99,255,.4);
-  }
-
-  .btn-send:hover { transform: scale(1.05); }
-  .btn-send:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-
-  /* LOADING DOTS */
-  .loading-dots {
-    display: inline-flex;
-    gap: .3rem;
-    padding: .8rem 1rem;
-  }
-
-  .loading-dots span {
-    width: 8px; height: 8px;
-    background: var(--muted);
-    border-radius: 50%;
-    animation: bounce .8s ease-in-out infinite;
-  }
-
-  .loading-dots span:nth-child(2) { animation-delay: .15s; }
-  .loading-dots span:nth-child(3) { animation-delay: .3s; }
-
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); opacity: .4; }
-    50% { transform: translateY(-6px); opacity: 1; }
-  }
-
-  /* SESSION END CARD */
-  .end-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 2rem;
-    text-align: center;
-  }
-
-  .end-emoji { font-size: 3rem; margin-bottom: 1rem; }
-  .end-title {
-    font-family: var(--font-head);
-    font-size: 1.6rem;
-    font-weight: 800;
-    margin-bottom: .5rem;
-  }
-
-  .end-stats {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin: 1.5rem 0;
-  }
-
-  .stat-box {
-    background: var(--surface2);
-    border-radius: 12px;
-    padding: 1rem;
-  }
-
-  .stat-num {
-    font-family: var(--font-head);
-    font-size: 1.8rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .stat-label { font-size: .8rem; color: var(--muted); margin-top: .2rem; }
-
-  .badges-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: .5rem;
-    justify-content: center;
-    margin: 1rem 0;
-  }
-
-  .badge-chip {
-    background: rgba(255,215,0,.1);
-    border: 1px solid rgba(255,215,0,.3);
-    border-radius: 20px;
-    padding: .4rem .9rem;
-    font-size: .85rem;
-    display: flex;
-    align-items: center;
-    gap: .3rem;
-  }
-
-  /* PARENT SECTION */
-  #screen-parent {
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    min-height: 100vh;
-  }
-
-  .parent-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 2rem;
-    width: 100%;
-    max-width: 500px;
-  }
-
-  .parent-title {
-    font-family: var(--font-head);
-    font-size: 1.4rem;
-    font-weight: 800;
-    margin-bottom: 1.5rem;
-    text-align: center;
-  }
-
-  .history-item {
-    background: var(--surface2);
-    border-radius: 10px;
-    padding: 1rem;
-    margin-bottom: .75rem;
-    font-size: .88rem;
-  }
-
-  .history-date { color: var(--muted); font-size: .78rem; margin-bottom: .4rem; }
-  .history-scores { display: flex; gap: 1rem; flex-wrap: wrap; }
-  .history-score { display: flex; align-items: center; gap: .3rem; }
-
-  .input-pw {
-    width: 100%;
-    background: var(--surface2);
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    padding: .8rem 1rem;
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: .95rem;
-    margin-bottom: 1rem;
-    transition: border-color .2s;
-  }
-
-  .input-pw:focus { outline: none; border-color: var(--accent); }
-
-  /* FLOATING PARENT BTN */
-  .fab-parent {
-    position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
-    background: var(--surface2);
-    border: 1px solid rgba(108,99,255,.5);
-    border-radius: 50px;
-    padding: .6rem 1.2rem;
-    font-size: .82rem;
-    color: var(--text);
-    cursor: pointer;
-    transition: all .2s;
-    z-index: 50;
-    display: flex;
-    align-items: center;
-    gap: .4rem;
-    box-shadow: 0 4px 16px rgba(0,0,0,.5);
-  }
-
-  .fab-parent:hover { border-color: var(--accent); color: var(--accent); }
-
-  .fab-settings {
-    position: fixed;
-    bottom: 1.5rem;
-    left: 1.5rem;
-    background: var(--surface2);
-    border: 1px solid rgba(255,101,132,.5);
-    border-radius: 50px;
-    padding: .6rem 1.2rem;
-    font-size: .82rem;
-    color: var(--text);
-    cursor: pointer;
-    transition: all .2s;
-    z-index: 50;
-    display: flex;
-    align-items: center;
-    gap: .4rem;
-    box-shadow: 0 4px 16px rgba(0,0,0,.5);
-  }
-
-  .fab-settings:hover { border-color: var(--accent2); color: var(--accent2); }
-
-  /* RESPONSIVE */
-  @media (max-width: 480px) {
-    .subject-grid { grid-template-columns: repeat(3, 1fr); }
-    .end-stats { grid-template-columns: repeat(2, 1fr); }
-    .content-area { padding: 1rem; }
-  }
-
-  /* TRANSITION OVERLAY */
-  .bloc-transition {
-    background: linear-gradient(135deg, rgba(255,101,132,.1), rgba(108,99,255,.1));
-    border: 1px solid rgba(255,101,132,.3);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    text-align: center;
-    margin-bottom: 1rem;
-    animation: msgIn .4s ease;
-  }
-
-  .bloc-transition h2 {
-    font-family: var(--font-head);
-    font-size: 1.3rem;
-    font-weight: 800;
-    margin: .5rem 0;
-  }
-
-  pre { white-space: pre-wrap; word-break: break-word; font-family: var(--font-body); }
-
-  /* HIDDEN */
-  .hidden { display: none !important; }
-
-  /* JSON OUTPUT */
-  .json-block {
-    background: #0a0b10;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1rem;
-    font-size: .78rem;
-    font-family: 'Courier New', monospace;
-    color: #7dd3fc;
-    white-space: pre-wrap;
-    word-break: break-all;
-    max-height: 200px;
-    overflow-y: auto;
-    margin-top: .5rem;
-  }
-
-  .collapsible-toggle {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    padding: .4rem .8rem;
-    border-radius: 6px;
-    font-size: .78rem;
-    cursor: pointer;
-    transition: all .2s;
-    margin-top: .5rem;
-  }
-
-  .collapsible-toggle:hover { border-color: var(--accent); color: var(--accent); }
-
-  /* SYNC STATUS */
-  .sync-status {
-    display: inline-flex;
-    align-items: center;
-    gap: .4rem;
-    font-size: .75rem;
-    padding: .25rem .65rem;
-    border-radius: 20px;
-    font-weight: 600;
-    transition: all .3s;
-  }
-
-  .sync-ok   { background: rgba(74,222,128,.1);  color: var(--green);   border: 1px solid rgba(74,222,128,.3);  }
-  .sync-err  { background: rgba(248,113,113,.1); color: #f87171;        border: 1px solid rgba(248,113,113,.3); }
-  .sync-wait { background: rgba(251,191,36,.1);  color: #fbbf24;        border: 1px solid rgba(251,191,36,.3);  }
-  .sync-off  { background: var(--surface2);      color: var(--muted);   border: 1px solid var(--border);        }
-
-  /* SETUP MODAL */
-  .modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,.75);
-    backdrop-filter: blur(6px);
-    z-index: 200;
-    display: flex; align-items: center; justify-content: center;
-    padding: 1.5rem;
-  }
-
-  .modal-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 2rem;
-    max-width: 520px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-
-  .modal-title {
-    font-family: var(--font-head);
-    font-size: 1.3rem;
-    font-weight: 800;
-    margin-bottom: .4rem;
-  }
-
-  .modal-step {
-    background: var(--surface2);
-    border-radius: 12px;
-    padding: 1rem 1.2rem;
-    margin: .75rem 0;
-    font-size: .88rem;
-    line-height: 1.6;
-    border-left: 3px solid var(--accent);
-  }
-
-  .modal-step strong { color: var(--accent); }
-  .modal-step code {
-    background: rgba(108,99,255,.15);
-    padding: .1rem .4rem;
-    border-radius: 4px;
-    font-size: .82rem;
-    font-family: 'Courier New', monospace;
-    color: #a5b4fc;
-  }
-
-  .input-url {
-    width: 100%;
-    background: var(--surface2);
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    padding: .8rem 1rem;
-    color: var(--text);
-    font-family: 'Courier New', monospace;
-    font-size: .82rem;
-    margin: .75rem 0;
-    transition: border-color .2s;
-  }
-
-  .input-url:focus { outline: none; border-color: var(--accent); }
-
-  .recompenses-list { display: flex; flex-direction: column; gap: .5rem; margin: .75rem 0; }
-
-  .recomp-item {
-    background: var(--surface2);
-    border-radius: 10px;
-    padding: .75rem 1rem;
-    display: flex;
-    align-items: center;
-    gap: .75rem;
-    font-size: .88rem;
-  }
-
-  .recomp-pts {
-    background: linear-gradient(135deg, var(--gold), #ffaa00);
-    color: #000;
-    padding: .2rem .6rem;
-    border-radius: 20px;
-    font-weight: 800;
-    font-size: .78rem;
-    flex-shrink: 0;
-  }
-
-  .cloud-indicator {
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    font-size: .78rem;
-    color: var(--muted);
-    margin-top: .75rem;
-    padding: .5rem .75rem;
-    background: var(--surface2);
-    border-radius: 8px;
-    border: 1px solid var(--border);
-  }
+    --ink:#0f0f0f;--ink2:#2a2a2a;--muted:#6b6b6b;--faint:#e8e4df;
+    --paper:#f5f1eb;--card:#ffffff;--accent:#c8452a;--accent2:#2a6bc8;
+    --gold:#c8a832;--green:#2a8c5a;--radius:14px;--shadow:0 2px 24px rgba(0,0,0,0.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;padding-bottom:80px;}
+  header{background:var(--ink);color:white;padding:20px 24px 16px;position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:16px;}
+  .logo{font-family:'DM Serif Display',serif;font-size:22px;letter-spacing:-0.5px;flex:1;}
+  .logo span{color:var(--accent);font-style:italic;}
+  .sync-status{font-size:11px;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);}
+  .sync-status.ok{background:rgba(42,140,90,0.3);color:#7eeaaa;}
+  .sync-status.err{background:rgba(200,69,42,0.3);color:#ffaaaa;}
+  .tabs{display:flex;background:var(--ink2);padding:0 8px;}
+  .tab{flex:1;text-align:center;padding:12px 4px;color:rgba(255,255,255,0.45);font-size:11px;font-weight:500;letter-spacing:0.3px;text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;}
+  .tab.active{color:white;border-bottom-color:var(--accent);}
+  .view{display:none;padding:20px 16px;}.view.active{display:block;}
+  .search-wrap{position:relative;margin-bottom:16px;}
+  .search-wrap input{width:100%;padding:12px 16px 12px 42px;border-radius:12px;border:1.5px solid var(--faint);background:var(--card);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;transition:border-color 0.2s;}
+  .search-wrap input:focus{border-color:var(--accent);}
+  .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:16px;}
+  .collab-grid{display:flex;flex-direction:column;gap:12px;}
+  .collab-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;border-left:4px solid transparent;display:flex;align-items:center;gap:14px;}
+  .collab-card.priority-high{border-left-color:var(--accent);}
+  .collab-card.priority-mid{border-left-color:var(--gold);}
+  .collab-card.priority-ok{border-left-color:var(--green);}
+  .collab-card-body{flex:1;min-width:0;cursor:pointer;}
+  .collab-name{font-size:16px;font-weight:600;margin-bottom:2px;}
+  .collab-meta{font-size:12px;color:var(--muted);}
+  .collab-actions{display:flex;gap:6px;flex-shrink:0;}
+  .btn-edit{background:#e8eef5;border:none;color:var(--accent2);width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;}
+  .btn-delete{background:#fdecea;border:none;color:var(--accent);width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;}
+  .collab-badge{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:500;}
+  .badge-alert{background:#fdecea;color:var(--accent);}
+  .badge-ok{background:#e8f5ee;color:var(--green);}
+  .badge-soon{background:#fef9e7;color:var(--gold);}
+  .avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:20px;color:white;flex-shrink:0;}
+  .av-red{background:var(--accent);}.av-blue{background:var(--accent2);}.av-gold{background:var(--gold);}.av-green{background:var(--green);}.av-purple{background:#8c2ac8;}
+
+  /* MODAL */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.active{display:flex;}
+  .modal{background:var(--card);border-radius:var(--radius);padding:24px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
+  .modal-title{font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:20px;}
+  .modal-actions{display:flex;gap:10px;margin-top:16px;}
+  .btn-cancel{flex:1;padding:12px;background:var(--faint);border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;}
+  .btn-save{flex:2;padding:12px;background:var(--ink);color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
+  .btn-save:hover{background:var(--accent);}
+
+  /* CONFIRM DELETE */
+  .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:600;display:none;align-items:center;justify-content:center;padding:20px;}
+  .confirm-overlay.active{display:flex;}
+  .confirm-box{background:var(--card);border-radius:var(--radius);padding:24px;width:100%;max-width:360px;text-align:center;}
+  .confirm-icon{font-size:40px;margin-bottom:12px;}
+  .confirm-title{font-size:18px;font-weight:600;margin-bottom:8px;}
+  .confirm-desc{font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.5;}
+  .confirm-actions{display:flex;gap:10px;}
+  .btn-confirm-cancel{flex:1;padding:12px;background:var(--faint);border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;}
+  .btn-confirm-delete{flex:1;padding:12px;background:var(--accent);color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
+
+  /* DETAIL */
+  #detail-view{display:none;}
+  #detail-view.active{display:block;}
+  .detail-header{background:var(--ink);color:white;padding:20px 16px 24px;}
+  .back-btn{background:rgba(255,255,255,0.15);border:none;color:white;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;margin-bottom:16px;display:inline-flex;align-items:center;gap:6px;}
+  .detail-name{font-family:'DM Serif Display',serif;font-size:28px;margin-bottom:4px;}
+  .detail-sub{font-size:14px;color:rgba(255,255,255,0.6);}
+  .section-title{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin:20px 0 10px;}
+  .info-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+  .chip{background:var(--card);border:1.5px solid var(--faint);border-radius:20px;padding:6px 14px;font-size:13px;}
+  .timeline{position:relative;padding-left:24px;}
+  .timeline::before{content:'';position:absolute;left:6px;top:8px;bottom:8px;width:2px;background:var(--faint);border-radius:2px;}
+  .tl-item{position:relative;margin-bottom:20px;background:var(--card);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow);}
+  .tl-item::before{content:'';position:absolute;left:-20px;top:18px;width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid var(--paper);}
+  .tl-date{font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:500;}
+  .tl-content{font-size:14px;line-height:1.6;color:var(--ink2);}
+  .tl-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .tl-tag{font-size:11px;padding:3px 9px;border-radius:10px;background:var(--paper);color:var(--muted);font-weight:500;}
+  .tl-tag.motivation{background:#e8f5ee;color:var(--green);}
+  .tl-tag.tension{background:#fdecea;color:var(--accent);}
+  .tl-tag.perso{background:#fef9e7;color:var(--gold);}
+  .tl-tag.objectif{background:#e8eef5;color:var(--accent2);}
+  .ai-section{background:var(--ink);border-radius:var(--radius);padding:16px;margin-bottom:16px;}
+  .ai-section label{color:rgba(255,255,255,0.6);font-size:12px;display:block;margin-bottom:8px;letter-spacing:0.5px;text-transform:uppercase;}
+  .ai-input-wrap{display:flex;gap:8px;}
+  .ai-input{flex:1;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:10px 14px;color:white;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;}
+  .ai-input::placeholder{color:rgba(255,255,255,0.35);}
+  .ai-send{background:var(--accent);border:none;color:white;width:40px;height:40px;border-radius:10px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .ai-response{margin-top:12px;background:rgba(255,255,255,0.07);border-radius:10px;padding:12px;color:rgba(255,255,255,0.85);font-size:14px;line-height:1.6;display:none;}
+  .ai-response.visible{display:block;}
+  .ai-thinking{display:inline-flex;gap:4px;align-items:center;}
+  .ai-thinking span{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:bounce 1.2s ease-in-out infinite;}
+  .ai-thinking span:nth-child(2){animation-delay:0.2s;}
+  .ai-thinking span:nth-child(3){animation-delay:0.4s;}
+  @keyframes bounce{0%,80%,100%{transform:scale(0.8);opacity:0.5}40%{transform:scale(1.2);opacity:1}}
+  .form-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px;}
+  .form-title{font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:16px;}
+  .form-group{margin-bottom:14px;}
+  .form-group label{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:0.5px;text-transform:uppercase;display:block;margin-bottom:6px;}
+  .form-group input,.form-group textarea,.form-group select{width:100%;padding:11px 14px;border-radius:10px;border:1.5px solid var(--faint);font-family:'DM Sans',sans-serif;font-size:14px;background:var(--paper);outline:none;transition:border-color 0.2s;color:var(--ink);}
+  .form-group textarea{min-height:100px;resize:vertical;line-height:1.6;}
+  .form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--accent);background:white;}
+  .tag-selector{display:flex;flex-wrap:wrap;gap:8px;}
+  .tag-btn{padding:6px 12px;border-radius:20px;border:1.5px solid var(--faint);background:white;font-size:12px;cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;}
+  .tag-btn.selected{background:var(--ink);color:white;border-color:var(--ink);}
+  .submit-btn{width:100%;padding:14px;background:var(--ink);color:white;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.2s;margin-top:6px;}
+  .submit-btn:hover{background:var(--accent);}
+  .submit-btn:disabled{background:var(--muted);cursor:not-allowed;}
+  .alert-card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:12px;display:flex;align-items:flex-start;gap:12px;border-left:4px solid var(--accent);}
+  .alert-card.info{border-left-color:var(--accent2);}
+  .alert-card.success{border-left-color:var(--green);}
+  .alert-icon{font-size:22px;flex-shrink:0;}
+  .alert-title{font-weight:600;font-size:14px;margin-bottom:3px;}
+  .alert-desc{font-size:13px;color:var(--muted);line-height:1.5;}
+  .fab{position:fixed;bottom:24px;right:20px;width:56px;height:56px;background:var(--accent);color:white;border:none;border-radius:50%;font-size:26px;cursor:pointer;box-shadow:0 4px 20px rgba(200,69,42,0.4);transition:transform 0.2s;z-index:50;display:flex;align-items:center;justify-content:center;}
+  .fab:hover{transform:scale(1.1);}
+  .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:white;padding:12px 20px;border-radius:12px;font-size:14px;opacity:0;transition:all 0.3s;z-index:200;white-space:nowrap;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .stats-row{display:flex;gap:10px;margin-bottom:16px;}
+  .stat-mini{flex:1;background:var(--card);border-radius:12px;padding:12px;text-align:center;box-shadow:var(--shadow);}
+  .stat-num{font-family:'DM Serif Display',serif;font-size:26px;color:var(--ink);}
+  .stat-lbl{font-size:11px;color:var(--muted);margin-top:2px;}
+  .loading{text-align:center;padding:32px;color:var(--muted);}
+  .setup-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px;}
+  .setup-card h3{font-family:'DM Serif Display',serif;font-size:18px;margin-bottom:12px;}
+  .setup-step{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start;}
+  .step-num{width:28px;height:28px;background:var(--ink);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;}
+  .step-text{font-size:14px;line-height:1.6;flex:1;}
+
+  /* ACTIONS ALERTES */
+  .alert-card { position: relative; }
+  .alert-btns { display: flex; gap: 8px; margin-top: 10px; }
+  .btn-done { flex:1; padding: 8px; background: #e8f5ee; border: none; border-radius: 8px; color: var(--green); font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  .btn-done:hover { background: var(--green); color: white; }
+  .btn-ko { flex:1; padding: 8px; background: #fdecea; border: none; border-radius: 8px; color: var(--accent); font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  .btn-ko:hover { background: var(--accent); color: white; }
+  /* MODAL ENTRETIEN EDIT */
+  .modal-big { background: var(--card); border-radius: var(--radius); padding: 24px; width: 100%; max-width: 560px; max-height: 92vh; overflow-y: auto; }
+  /* MODAL KO REASON */
+  .ko-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 700; display: none; align-items: center; justify-content: center; padding: 20px; }
+  .ko-overlay.active { display: flex; }
+  .ko-box { background: var(--card); border-radius: var(--radius); padding: 24px; width: 100%; max-width: 400px; }
+  .ko-box h3 { font-family: 'DM Serif Display', serif; font-size: 18px; margin-bottom: 12px; }
+  .ko-box textarea { width: 100%; padding: 11px 14px; border-radius: 10px; border: 1.5px solid var(--faint); font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--paper); outline: none; min-height: 80px; resize: vertical; margin-bottom: 12px; color: var(--ink); }
+  .ko-actions { display: flex; gap: 10px; }
 </style>
 </head>
 <body>
 
-<!-- ══════════ SCREEN: WELCOME ══════════ -->
-<div id="screen-welcome" class="screen active">
-  <div class="welcome-logo">🎓</div>
-  <h1 class="welcome-title">Mon Coach<br>Brevet</h1>
-  <p class="welcome-sub">Ton assistant personnel pour cartonner au Brevet !</p>
-
-  <div class="day-info" id="welcome-date-info">
-    📅 <strong id="date-display">Chargement...</strong> — Session du jour
+<div id="main-app">
+  <header>
+    <div class="logo">Team<span>Pulse</span></div>
+    <div id="sync-indicator" class="sync-status">⚙️ Config</div>
+  </header>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('equipe')">👥 Équipe</div>
+    <div class="tab" onclick="switchTab('alertes')">🔔 Alertes</div>
+    <div class="tab" onclick="switchTab('ajouter')">✏️ Saisir</div>
+    <div class="tab" onclick="switchTab('ia')">🤖 IA</div>
+    <div class="tab" onclick="switchTab('config')">⚙️ Config</div>
   </div>
 
-  <button class="btn-primary" onclick="startSession()" style="margin-bottom:1rem">
-    🚀 Démarrer ma session
-  </button>
-  <br>
-  <button class="btn-secondary" onclick="showParent()">
-    🔒 Espace parents
-  </button>
-</div>
+  <!-- VUE ÉQUIPE -->
+  <div class="view active" id="view-equipe">
+    <div class="stats-row">
+      <div class="stat-mini"><div class="stat-num" id="stat-total">—</div><div class="stat-lbl">Collaborateurs</div></div>
+      <div class="stat-mini"><div class="stat-num" id="stat-entretiens">—</div><div class="stat-lbl">Entretiens</div></div>
+      <div class="stat-mini"><div class="stat-num" style="color:var(--accent)" id="stat-alertes">—</div><div class="stat-lbl">Alertes</div></div>
+    </div>
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="Rechercher..." id="search-input" oninput="filterCollabs()">
+    </div>
+    <div class="collab-grid" id="collab-grid">
+      <div class="loading">Connecte l'app dans ⚙️ Config</div>
+    </div>
+  </div>
 
-<!-- ══════════ SCREEN: APP ══════════ -->
-<div id="screen-app" class="screen">
+  <!-- VUE ALERTES -->
+  <div class="view" id="view-alertes">
+    <div id="alertes-list"><div class="loading">Chargement...</div></div>
+  </div>
 
-  <!-- TOP BAR -->
-  <div class="topbar">
-    <div class="topbar-logo">🎓 Coach Brevet</div>
-    <div style="display:flex;align-items:center;gap:.75rem">
-      <span class="sync-status sync-off" id="sync-status" onclick="openSetupModal()" style="cursor:pointer" title="Cliquer pour configurer Google Sheets">
-        ☁️ Sheets
-      </span>
-      <div class="topbar-badges">
-        🏅 <span class="badge-count" id="badge-count-display">0</span> badges
+  <!-- VUE SAISIR -->
+  <div class="view" id="view-ajouter">
+    <div class="form-card">
+      <div class="form-title">Nouvel entretien</div>
+      <div class="form-group"><label>Collaborateur</label><select id="form-collab"><option value="">Sélectionner...</option></select></div>
+      <div class="form-group"><label>Date</label><input type="date" id="form-date"></div>
+      <div class="form-group"><label>Ce qu'il / elle m'a dit</label><textarea id="form-content" placeholder="Notes libres..."></textarea></div>
+      <div class="form-group">
+        <label>Thèmes abordés</label>
+        <div class="tag-selector">
+          <button class="tag-btn" onclick="toggleTag(this,'motivation')">💪 Motivation</button>
+          <button class="tag-btn" onclick="toggleTag(this,'tension')">⚠️ Tension</button>
+          <button class="tag-btn" onclick="toggleTag(this,'perso')">👤 Vie perso</button>
+          <button class="tag-btn" onclick="toggleTag(this,'objectif')">🎯 Objectif</button>
+          <button class="tag-btn" onclick="toggleTag(this,'formation')">📚 Formation</button>
+          <button class="tag-btn" onclick="toggleTag(this,'qualite')">✅ Qualité</button>
+          <button class="tag-btn" onclick="toggleTag(this,'conge')">🏖️ Congés</button>
+          <button class="tag-btn" onclick="toggleTag(this,'sante')">❤️ Santé</button>
+        </div>
+      </div>
+      <div class="form-group"><label>✨ Détail à retenir</label><input type="text" id="form-detail" placeholder="Ex : Son fils vient d'entrer au collège..."></div>
+      <div class="form-group"><label>Action à faire</label><input type="text" id="form-action" placeholder="Ex : Lui proposer la formation qualité..."></div>
+      <button class="submit-btn" id="save-btn" onclick="saveEntretien()">💾 Enregistrer</button>
+    </div>
+  </div>
+
+  <!-- VUE IA -->
+  <div class="view" id="view-ia">
+    <div class="ai-section">
+      <label>🤖 Question sur ton équipe</label>
+      <div class="ai-input-wrap">
+        <input type="text" class="ai-input" id="ia-global-input" placeholder="Ex: Qui n'a pas eu d'entretien depuis 1 mois ?" onkeydown="if(event.key==='Enter')askIAGlobal()">
+        <button class="ai-send" onclick="askIAGlobal()">→</button>
+      </div>
+      <div class="ai-response" id="ia-global-response"></div>
+    </div>
+    <div class="form-card">
+      <div class="section-title">Suggestions</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button class="tag-btn" style="text-align:left;padding:10px 14px;border-radius:10px;" onclick="setQ('Qui montre des signes de démotivation ?')">⚠️ Signes de démotivation ?</button>
+        <button class="tag-btn" style="text-align:left;padding:10px 14px;border-radius:10px;" onclick="setQ('Qui a des objectifs d\'évolution à suivre ?')">🎯 Objectifs d'évolution</button>
+        <button class="tag-btn" style="text-align:left;padding:10px 14px;border-radius:10px;" onclick="setQ('Résume l\'ambiance générale de l\'équipe')">📊 Ambiance générale</button>
+        <button class="tag-btn" style="text-align:left;padding:10px 14px;border-radius:10px;" onclick="setQ('Quels anniversaires arrivent bientôt ?')">🎂 Prochains événements</button>
+        <button class="tag-btn" style="text-align:left;padding:10px 14px;border-radius:10px;" onclick="setQ('Prépare-moi des points pour mon prochain tour d\'équipe')">📋 Préparer mon tour d'équipe</button>
       </div>
     </div>
   </div>
 
-  <!-- PROGRESS -->
-  <div class="session-progress">
-    <div class="progress-steps">
-      <div class="step-dot active" id="step-1"></div>
-      <div class="step-dot" id="step-2"></div>
-      <div class="step-dot" id="step-3"></div>
-      <div class="step-dot" id="step-4"></div>
-      <div class="step-dot" id="step-5"></div>
-      <div class="step-dot" id="step-6"></div>
+  <!-- VUE CONFIG -->
+  <div class="view" id="view-config">
+    <div class="setup-card">
+      <h3>🔧 Connexion Google Sheets</h3>
+      <div class="form-group" style="margin-top:8px;">
+        <label>URL de déploiement Apps Script</label>
+        <input type="url" id="config-url" placeholder="https://script.google.com/macros/s/..." oninput="saveConfig()">
+      </div>
+      <button class="submit-btn" onclick="testerConnexion()">🔌 Tester la connexion</button>
+      <div id="test-result" style="margin-top:10px;font-size:13px;display:none;padding:10px;border-radius:8px;"></div>
     </div>
-    <div class="progress-label">
-      <span id="bloc-indicator"><span class="bloc-badge bloc1-badge">📚 Bloc 1 — Devoirs</span></span>
-      <span id="progress-text" style="color:var(--muted);font-size:.78rem">Étape 1/6</span>
+    <div class="setup-card">
+      <h3>➕ Ajouter un collaborateur</h3>
+      <div class="form-group"><label>Nom complet</label><input type="text" id="nc-nom" placeholder="Prénom N."></div>
+      <div class="form-group"><label>Poste</label><input type="text" id="nc-poste" placeholder="Ex : Opérateur couture"></div>
+      <div class="form-group"><label>Ancienneté</label><input type="text" id="nc-anciennete" placeholder="Ex : 3 ans"></div>
+      <div class="form-group"><label>Équipe</label><select id="nc-equipe"><option value="">Sélectionner...</option><option value="Matin">🌅 Matin</option><option value="Journée">☀️ Journée</option><option value="Après-midi">🌆 Après-midi</option></select></div>
+      <div class="form-group"><label>Date de naissance (JJ/MM)</label><input type="text" id="nc-naissance" placeholder="14/03"></div>
+      <div class="form-group"><label>Infos personnelles à retenir</label><textarea id="nc-perso" placeholder="Passions, famille, ce qui lui tient à cœur..." style="min-height:70px;"></textarea></div>
+      <button class="submit-btn" onclick="ajouterCollab()">➕ Ajouter</button>
     </div>
   </div>
-
-  <!-- CONTENT -->
-  <div class="content-area" id="main-content">
-    <!-- Dynamic content injected here -->
-  </div>
-
-  <!-- FAB PARENT -->
-  <button class="fab-parent" onclick="showParent()">🔒 Parents</button>
-  <button class="fab-settings" onclick="openApiSettings()">⚙️ Clé API</button>
-
 </div>
 
-<!-- ══════════ SCREEN: PARENT ══════════ -->
-<div id="screen-parent" class="screen">
-  <div class="parent-card">
-    <div class="parent-title">🔒 Espace Parents</div>
 
-    <div id="parent-login">
-      <p style="color:var(--muted);font-size:.9rem;text-align:center;margin-bottom:1rem">Mot de passe requis pour accéder aux données d'Alexandre.</p>
-      <input type="password" class="input-pw" id="parent-pw" placeholder="Mot de passe..." />
-      <button class="btn-primary" style="width:100%" onclick="checkParentPW()">Accéder au tableau de bord</button>
-      <br><br>
-      <button class="btn-secondary" style="width:100%" onclick="showScreen('screen-welcome')">← Retour</button>
-    </div>
-
-    <div id="parent-dashboard" class="hidden">
-      <h3 style="font-family:var(--font-head);margin-bottom:.5rem">📊 Historique des sessions</h3>
-      <div class="cloud-indicator" id="parent-cloud-indicator">
-        <span id="parent-cloud-icon">💾</span>
-        <span id="parent-cloud-text">Données locales uniquement</span>
-      </div>
-      <div id="parent-history" style="margin-top:1rem"></div>
-
-      <h3 style="font-family:var(--font-head);margin:.75rem 0 .5rem">🎁 Récompenses</h3>
-      <div class="recompenses-list" id="recomp-list">
-        <p style="color:var(--muted);font-size:.85rem">Configurer Google Sheets pour voir les récompenses personnalisables.</p>
-      </div>
-
-      <div style="margin-top:1.5rem;text-align:center;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
-        <button class="btn-secondary" onclick="refreshParentData()">🔄 Actualiser</button>
-        <button class="btn-secondary" onclick="showScreen('screen-welcome')">← Retour</button>
+<!-- MODAL EDITER ENTRETIEN -->
+<div class="modal-overlay" id="modal-edit-entretien">
+  <div class="modal modal-big">
+    <div class="modal-title">✏️ Modifier l'entretien</div>
+    <input type="hidden" id="edit-entretien-id">
+    <input type="hidden" id="edit-entretien-collab-id">
+    <div class="form-group"><label>Date</label><input type="date" id="edit-entretien-date"></div>
+    <div class="form-group"><label>Notes</label><textarea id="edit-entretien-contenu" style="min-height:120px;"></textarea></div>
+    <div class="form-group">
+      <label>Thèmes</label>
+      <div class="tag-selector" id="edit-tag-selector">
+        <button class="tag-btn" onclick="toggleEditTag(this,'motivation')">💪 Motivation</button>
+        <button class="tag-btn" onclick="toggleEditTag(this,'tension')">⚠️ Tension</button>
+        <button class="tag-btn" onclick="toggleEditTag(this,'perso')">👤 Vie perso</button>
+        <button class="tag-btn" onclick="toggleEditTag(this,'objectif')">🎯 Objectif</button>
+        <button class="tag-btn" onclick="toggleEditTag(this,'formation')">📚 Formation</button>
+        <button class="tag-btn" onclick="toggleEditTag(this,'qualite')">✅ Qualité</button>
+        <button class="tag-btn" onclick="toggleEditTag(this,'conge')">🏖️ Congés</button>
+        <button class="tag-btn" onclick="toggleEditTag(this,'sante')">❤️ Santé</button>
       </div>
     </div>
+    <div class="form-group"><label>✨ Détail à retenir</label><input type="text" id="edit-entretien-detail"></div>
+    <div class="form-group"><label>Action à faire</label><input type="text" id="edit-entretien-action"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModalEntretien()">Annuler</button>
+      <button class="btn-save" onclick="sauvegarderEntretien()">💾 Sauvegarder</button>
+    </div>
   </div>
 </div>
 
-<!-- BADGE TOAST -->
-<div class="badge-toast" id="badge-toast">
-  <div class="badge-toast-icon" id="toast-icon">🥇</div>
-  <div>
-    <div class="badge-toast-text" id="toast-title">Badge débloqué !</div>
-    <div class="badge-toast-sub" id="toast-sub">Bravo Alexandre !</div>
+<!-- MODAL KO RAISON -->
+<div class="ko-overlay" id="ko-overlay">
+  <div class="ko-box">
+    <h3>❌ Pourquoi tu ne feras pas cette action ?</h3>
+    <textarea id="ko-reason" placeholder="Ex: Plus d'actualité, situation réglée, délégué à quelqu'un d'autre..."></textarea>
+    <div class="ko-actions">
+      <button class="btn-cancel" onclick="closeKO()">Annuler</button>
+      <button class="btn-save" onclick="confirmerKO()">Valider</button>
+    </div>
   </div>
 </div>
 
-<!-- SETUP MODAL -->
-<div class="modal-overlay hidden" id="setup-modal">
-  <div class="modal-box">
-    <div class="modal-title">☁️ Connexion Google Sheets</div>
-    <p style="color:var(--muted);font-size:.88rem;margin-bottom:1rem">Suivez ces 5 étapes pour synchroniser les sessions d'Alexandre dans le cloud.</p>
-
-    <div class="modal-step">
-      <strong>1.</strong> Ouvre <a href="https://sheets.google.com" target="_blank" style="color:var(--accent)">Google Sheets</a> et crée un nouveau classeur nommé <code>Alexandre Coach Brevet</code>
-    </div>
-    <div class="modal-step">
-      <strong>2.</strong> Dans le classeur, clique sur <code>Extensions → Apps Script</code>
-    </div>
-    <div class="modal-step">
-      <strong>3.</strong> Supprime tout le code existant, colle le contenu du fichier <code>google-apps-script.js</code> fourni, puis sauvegarde (<code>Ctrl+S</code>)
-    </div>
-    <div class="modal-step">
-      <strong>4.</strong> Lance la fonction <code>testInit()</code> une fois (bouton ▶ en haut) pour créer les onglets automatiquement
-    </div>
-    <div class="modal-step">
-      <strong>5.</strong> Clique sur <code>Déployer → Nouveau déploiement</code><br>
-      Type : <code>Application Web</code> · Accès : <code>Tout le monde</code><br>
-      Copie l'URL de déploiement et colle-la ci-dessous :
-    </div>
-
-    <input type="url" class="input-url" id="sheets-url-input"
-      placeholder="https://script.google.com/macros/s/XXXX/exec" />
-
-    <div style="display:flex;gap:.75rem;flex-wrap:wrap">
-      <button class="btn-primary" onclick="saveAndTestSheetsUrl()">✅ Tester & Enregistrer</button>
-      <button class="btn-secondary" onclick="closeSetupModal()">Annuler</button>
-    </div>
-
-    <div id="setup-test-result" style="margin-top:1rem;font-size:.85rem;display:none"></div>
-  </div>
-</div>
-
-
-<!-- ══════════ SCREEN: API SETUP ══════════ -->
-<div id="screen-apisetup" class="screen" style="align-items:center;justify-content:center;padding:2rem">
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2rem;max-width:480px;width:100%;text-align:center">
-    <div style="font-size:2.5rem;margin-bottom:1rem">🔑</div>
-    <div style="font-family:var(--font-head);font-size:1.4rem;font-weight:800;margin-bottom:.5rem">Clé API Claude</div>
-    <p style="color:var(--muted);font-size:.9rem;margin-bottom:1.5rem;line-height:1.6">
-      Pour faire fonctionner le coach, entre ta clé API Anthropic.<br>
-      Elle sera sauvegardée sur cet appareil uniquement.
-    </p>
-    <div style="background:var(--surface2);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:.85rem;line-height:1.6;border-left:3px solid var(--accent);text-align:left">
-      1. Va sur <a href="https://console.anthropic.com" target="_blank" style="color:var(--accent)">console.anthropic.com</a><br>
-      2. <strong>API Keys → Create Key</strong><br>
-      3. Copie la clé et colle-la ci-dessous
-    </div>
-    <input type="password" id="api-key-input"
-      style="width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:.8rem 1rem;color:var(--text);font-family:'Courier New',monospace;font-size:.85rem;margin-bottom:.75rem;transition:border-color .2s;outline:none"
-      placeholder="sk-ant-api03-..."
-      onfocus="this.style.borderColor='var(--accent)'"
-      onblur="this.style.borderColor='var(--border)'"
-      onkeydown="if(event.key==='Enter')saveApiKey()" />
-    <div id="api-key-error" style="color:#f87171;font-size:.82rem;margin-bottom:.75rem;min-height:1.2rem"></div>
-    <button class="btn-primary" style="width:100%" onclick="saveApiKey()">✅ Enregistrer et démarrer</button>
-  </div>
-</div>
-
-<!-- ══════════ SCREEN: WELCOME ══════════ -->
-<div id="screen-welcome" class="screen">
-  <div class="welcome-logo">🎓</div>
-  <h1 class="welcome-title">Mon Coach<br>Brevet</h1>
-  <p class="welcome-sub">Ton assistant personnel pour cartonner au Brevet !</p>
-  <div class="day-info" id="welcome-date-info">
-    📅 <strong id="date-display">Chargement...</strong> — Session du jour
-  </div>
-  <button class="btn-primary" onclick="startSession()" style="margin-bottom:1rem">🚀 Démarrer ma session</button>
-  <br>
-  <button class="btn-secondary" onclick="showParent()">🔒 Espace parents</button>
-</div>
-
-<!-- ══════════ SCREEN: APP ══════════ -->
-<div id="screen-app" class="screen">
-  <div class="topbar">
-    <div class="topbar-logo">🎓 Coach Brevet</div>
-    <div style="display:flex;align-items:center;gap:.75rem">
-      <span class="sync-status sync-off" id="sync-status" onclick="openSetupModal()" style="cursor:pointer">☁️ Sheets</span>
-      <div class="topbar-badges">🏅 <span class="badge-count" id="badge-count-display">0</span> badges</div>
-    </div>
-  </div>
-  <div class="session-progress">
-    <div class="progress-steps">
-      <div class="step-dot active" id="step-1"></div>
-      <div class="step-dot" id="step-2"></div>
-      <div class="step-dot" id="step-3"></div>
-      <div class="step-dot" id="step-4"></div>
-      <div class="step-dot" id="step-5"></div>
-      <div class="step-dot" id="step-6"></div>
-    </div>
-    <div class="progress-label">
-      <span id="bloc-indicator"><span class="bloc-badge bloc1-badge">📚 Bloc 1 — Devoirs</span></span>
-      <span id="progress-text" style="color:var(--muted);font-size:.78rem">Étape 1/6</span>
-    </div>
-  </div>
-  <div class="content-area" id="main-content"></div>
-  <button class="fab-parent" onclick="showParent()">🔒 Parents</button>
-</div>
-
-<!-- ══════════ SCREEN: PARENT ══════════ -->
-<div id="screen-parent" class="screen">
-  <div class="parent-card">
-    <div class="parent-title">🔒 Espace Parents</div>
-    <div id="parent-login">
-      <p style="color:var(--muted);font-size:.9rem;text-align:center;margin-bottom:1rem">Mot de passe requis.</p>
-      <input type="password" class="input-pw" id="parent-pw" placeholder="Mot de passe..." />
-      <button class="btn-primary" style="width:100%" onclick="checkParentPW()">Accéder</button>
-      <br><br>
-      <button class="btn-secondary" style="width:100%" onclick="showScreen('screen-welcome')">← Retour</button>
-    </div>
-    <div id="parent-dashboard" class="hidden">
-      <h3 style="font-family:var(--font-head);margin-bottom:.5rem">📊 Historique des sessions</h3>
-      <div class="cloud-indicator" id="parent-cloud-indicator">
-        <span id="parent-cloud-icon">💾</span>
-        <span id="parent-cloud-text">Données locales uniquement</span>
-      </div>
-      <div id="parent-history" style="margin-top:1rem"></div>
-      <h3 style="font-family:var(--font-head);margin:.75rem 0 .5rem">🎁 Récompenses</h3>
-      <div class="recompenses-list" id="recomp-list">
-        <p style="color:var(--muted);font-size:.85rem">Configurer Google Sheets pour voir les récompenses.</p>
-      </div>
-      <div style="margin-top:1.5rem;text-align:center;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
-        <button class="btn-secondary" onclick="refreshParentData()">🔄 Actualiser</button>
-        <button class="btn-secondary" onclick="showScreen('screen-welcome')">← Retour</button>
+<!-- DETAIL PANEL -->
+<div id="detail-view">
+  <div class="detail-header">
+    <button class="back-btn" onclick="closeDetail()">← Retour</button>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <div class="avatar av-red" id="detail-avatar" style="width:56px;height:56px;font-size:24px;"></div>
+      <div>
+        <div class="detail-name" id="detail-name"></div>
+        <div class="detail-sub" id="detail-sub"></div>
       </div>
     </div>
   </div>
-</div>
-
-<!-- BADGE TOAST -->
-<div class="badge-toast" id="badge-toast">
-  <div class="badge-toast-icon" id="toast-icon">🥇</div>
-  <div>
-    <div class="badge-toast-text" id="toast-title">Badge débloqué !</div>
-    <div class="badge-toast-sub" id="toast-sub">Bravo Alexandre !</div>
-  </div>
-</div>
-
-<!-- SETUP MODAL SHEETS -->
-<div class="modal-overlay hidden" id="setup-modal">
-  <div class="modal-box">
-    <div class="modal-title">☁️ Connexion Google Sheets</div>
-    <p style="color:var(--muted);font-size:.88rem;margin-bottom:1rem">Colle l'URL de déploiement de ton Apps Script.</p>
-    <div class="modal-step"><strong>1.</strong> Google Sheets → <code>Extensions → Apps Script</code></div>
-    <div class="modal-step"><strong>2.</strong> Colle le code <code>google-apps-script.js</code>, lance <code>testInit()</code></div>
-    <div class="modal-step"><strong>3.</strong> <code>Déployer → Nouveau déploiement → Application Web → Tout le monde</code></div>
-    <input type="url" class="input-url" id="sheets-url-input" placeholder="https://script.google.com/macros/s/XXXX/exec" />
-    <div style="display:flex;gap:.75rem;flex-wrap:wrap">
-      <button class="btn-primary" onclick="saveAndTestSheetsUrl()">✅ Tester & Enregistrer</button>
-      <button class="btn-secondary" onclick="closeSetupModal()">Annuler</button>
+  <div style="padding:16px;">
+    <div class="ai-section">
+      <label>🤖 Question sur ce collaborateur</label>
+      <div class="ai-input-wrap">
+        <input type="text" class="ai-input" id="ia-detail-input" placeholder="Ex: Qu'est-ce qui lui ferait plaisir ?" onkeydown="if(event.key==='Enter')askIADetail()">
+        <button class="ai-send" onclick="askIADetail()">→</button>
+      </div>
+      <div class="ai-response" id="ia-detail-response"></div>
     </div>
-    <div id="setup-test-result" style="margin-top:1rem;font-size:.85rem;display:none"></div>
+    <div class="section-title">Infos clés</div>
+    <div class="info-chips" id="detail-chips"></div>
+    <div class="section-title">✨ À retenir pour lui faire plaisir</div>
+    <div class="form-card" id="detail-perso" style="padding:12px 14px;font-size:14px;line-height:1.6;"></div>
+    <div class="section-title">Historique des entretiens</div>
+    <div class="timeline" id="detail-timeline"></div>
   </div>
 </div>
+
+<!-- MODAL MODIFIER COLLABORATEUR -->
+<div class="modal-overlay" id="modal-edit">
+  <div class="modal">
+    <div class="modal-title">✏️ Modifier le collaborateur</div>
+    <input type="hidden" id="edit-id">
+    <div class="form-group"><label>Nom complet</label><input type="text" id="edit-nom"></div>
+    <div class="form-group"><label>Poste</label><input type="text" id="edit-poste"></div>
+    <div class="form-group"><label>Ancienneté</label><input type="text" id="edit-anciennete"></div>
+    <div class="form-group"><label>Équipe</label><select id="edit-equipe"><option value="">Sélectionner...</option><option value="Matin">🌅 Matin</option><option value="Journée">☀️ Journée</option><option value="Après-midi">🌆 Après-midi</option></select></div>
+    <div class="form-group"><label>Date de naissance (JJ/MM)</label><input type="text" id="edit-naissance"></div>
+    <div class="form-group"><label>Infos personnelles à retenir</label><textarea id="edit-perso" style="min-height:100px;"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-save" onclick="sauvegarderModif()">💾 Sauvegarder</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM DELETE -->
+<div class="confirm-overlay" id="confirm-delete">
+  <div class="confirm-box">
+    <div class="confirm-icon">🗑️</div>
+    <div class="confirm-title">Supprimer ce collaborateur ?</div>
+    <div class="confirm-desc" id="confirm-desc">Cette action supprimera le collaborateur de la base. Ses entretiens seront conservés.</div>
+    <div class="confirm-actions">
+      <button class="btn-confirm-cancel" onclick="closeConfirm()">Annuler</button>
+      <button class="btn-confirm-delete" onclick="confirmerSuppression()">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<button class="fab" onclick="switchTab('ajouter')" id="main-fab">+</button>
+<div class="toast" id="toast"></div>
 
 <script>
+let SCRIPT_URL = localStorage.getItem('teampulse_url') || '';
+let collabsData = [];
+let entretiensData = [];
+let currentCollab = null;
+let selectedTags = [];
+let collabToDelete = null;
+const COLORS = ['av-red','av-blue','av-gold','av-green','av-purple'];
 
-// ══════════════════════════════════════════════
-//  RESSOURCES PAR MATIÈRE
-// ══════════════════════════════════════════════
-const RESSOURCES = {
-  'Maths': [
-    { label: '📺 Yvan Monka — Maths au lycée', url: 'https://www.youtube.com/@Yvmonka' },
-    { label: '📺 Professeur Peignot', url: 'https://www.youtube.com/@ProfesseurPeignot' },
-    { label: '📄 Annales Brevet Maths', url: 'https://www.annales2maths.com/brevet/' },
-  ],
-  'Français': [
-    { label: '📺 Alloprof — Français', url: 'https://www.youtube.com/@alloprof' },
-    { label: '📺 Linguisticae', url: 'https://www.youtube.com/@Linguisticae' },
-    { label: '📄 Bescherelle en ligne', url: 'https://bescherelle.com/' },
-  ],
-  'Histoire-Géo': [
-    { label: '📺 Les Bons Profs — Histoire', url: 'https://www.youtube.com/@LesBonsProfs' },
-    { label: '📺 Nota Bene', url: 'https://www.youtube.com/@NotaBene' },
-    { label: '📄 Géoconfluences', url: 'https://geoconfluences.ens-lyon.fr/' },
-  ],
-  'SVT': [
-    { label: '📺 Les Bons Profs — SVT', url: 'https://www.youtube.com/@LesBonsProfs' },
-    { label: '📺 Science étonnante', url: 'https://www.youtube.com/@ScienceEtonnante' },
-    { label: '📄 SVT au collège', url: 'https://www.svt-monde.org/' },
-  ],
-  'Physique-Chimie': [
-    { label: '📺 E=M6 Physique-Chimie', url: 'https://www.youtube.com/@LesBonsProfs' },
-    { label: '📺 Seb la Frite', url: 'https://www.youtube.com/@SeblaFrite' },
-    { label: '📄 Physique Chimie au collège', url: 'https://phychim.ac-versailles.fr/' },
-  ],
-  'Anglais': [
-    { label: '📺 English with Lucy', url: 'https://www.youtube.com/@EnglishwithLucy' },
-    { label: '📺 BBC Learning English', url: 'https://www.youtube.com/@bbclearningenglish' },
-    { label: '🎮 Duolingo', url: 'https://www.duolingo.com/' },
-  ],
-  'EMC': [
-    { label: '📺 Les Bons Profs — EMC', url: 'https://www.youtube.com/@LesBonsProfs' },
-    { label: '📄 Vie publique', url: 'https://www.vie-publique.fr/' },
-    { label: '📄 Lumni Éducation', url: 'https://www.lumni.fr/college' },
-  ],
-};
-
-function getRessourcesHTML(matiere) {
-  const res = RESSOURCES[matiere];
-  if (!res) return '';
-  return `
-    <div style="margin-top:1rem;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1rem">
-      <div style="font-family:var(--font-head);font-size:.85rem;font-weight:700;margin-bottom:.6rem;color:var(--muted)">
-        🔗 Ressources utiles pour ${matiere}
-      </div>
-      <div style="display:flex;flex-direction:column;gap:.4rem">
-        ${res.map(r => `<a href="${r.url}" target="_blank" rel="noopener"
-          style="color:var(--accent);font-size:.82rem;text-decoration:none;display:flex;align-items:center;gap:.4rem;padding:.3rem .5rem;border-radius:6px;transition:background .2s"
-          onmouseover="this.style.background='rgba(108,99,255,.1)'"
-          onmouseout="this.style.background='none'">${r.label}</a>`).join('')}
-      </div>
-    </div>`;
+// ============================================================
+// API
+// ============================================================
+async function callScript(action, data = {}) {
+  if (!SCRIPT_URL) throw new Error('URL non configurée');
+  const res = await fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action, ...data }),
+  });
+  const json = await res.json();
+  if (!json.success) throw new Error(json.error || 'Erreur serveur');
+  return json.data;
 }
 
-// ══════════════════════════════════════════════
-//  CONFIG — clé stockée dans le navigateur
-// ══════════════════════════════════════════════
-let CLAUDE_API_KEY = localStorage.getItem('claude_api_key') || '';
-let SHEETS_URL     = localStorage.getItem('sheets_url')     || '';
+async function loadAll() {
+  if (!SCRIPT_URL) return;
+  try {
+    setSyncStatus('⟳ Sync...', '');
+    const [collabs, entretiens, alertes] = await Promise.all([
+      callScript('getCollabs'),
+      callScript('getEntretiens'),
+      callScript('getAlertes'),
+    ]);
+    collabsData = collabs || [];
+    entretiensData = entretiens || [];
+    renderCollabs(collabsData);
+    renderAlertes(alertes || []);
+    updateStats(collabsData, entretiensData, alertes || []);
+    updateCollabSelect();
+    setSyncStatus('✓ Connecté', 'ok');
+  } catch (e) {
+    setSyncStatus('✗ Erreur', 'err');
+    document.getElementById('collab-grid').innerHTML = `<div class="loading">Erreur : ${e.message}</div>`;
+  }
+}
 
-const STATE = {
-  step: 0, bloc1Subject: '', bloc2Subject: '',
-  chatHistory: [], bloc1Score: null, bloc2Score: null,
-  sessionBadges: [],
-  sessionDate: new Date().toLocaleDateString('fr-FR'),
-  timerInterval: null,
-  sessions:   JSON.parse(localStorage.getItem('alex_sessions') || '[]'),
-  badgeCount: parseInt(localStorage.getItem('alex_badges')     || '0'),
-  sheetsConnected: false,
-};
-
-const SUBJECTS = [
-  { id:'math', label:'Maths',           icon:'📐' },
-  { id:'fr',   label:'Français',        icon:'📖' },
-  { id:'hg',   label:'Histoire-Géo',    icon:'🌍' },
-  { id:'svt',  label:'SVT',             icon:'🌿' },
-  { id:'pc',   label:'Physique-Chimie', icon:'⚗️' },
-  { id:'en',   label:'Anglais',         icon:'🇬🇧' },
-  { id:'emc',  label:'EMC',             icon:'⚖️' },
-];
-
-const PARENT_PASSWORD = 'alexandre2024';
-
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('date-display').textContent =
-    new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-  document.getElementById('badge-count-display').textContent = STATE.badgeCount;
-  updateSyncBadge();
-  if (!CLAUDE_API_KEY) showScreen('screen-apisetup');
-  else showScreen('screen-welcome');
-});
-
-// ── CLÉ API ──
-function saveApiKey() {
-  const key = document.getElementById('api-key-input').value.trim();
-  if (!key.startsWith('sk-ant-')) {
-    document.getElementById('api-key-error').textContent = '❌ Clé invalide — doit commencer par sk-ant-';
+// ============================================================
+// RENDU LISTE
+// ============================================================
+function renderCollabs(list) {
+  const grid = document.getElementById('collab-grid');
+  if (!list || !list.length) {
+    grid.innerHTML = '<div class="loading">Aucun collaborateur.<br>Ajoute-en un dans ⚙️ Config</div>';
     return;
   }
-  CLAUDE_API_KEY = key;
-  localStorage.setItem('claude_api_key', key);
-  showScreen('screen-welcome');
+  grid.innerHTML = list.map((c, i) => {
+    const nbE = entretiensData.filter(e => e.collabId === c.id).length;
+    const color = COLORS[i % COLORS.length];
+    const initial = (c.nom || '?')[0].toUpperCase();
+    return `
+      <div class="collab-card priority-ok">
+        <div class="avatar ${color}">${initial}</div>
+        <div class="collab-card-body" onclick="openDetail('${c.id}')">
+          <div class="collab-name">${c.nom}</div>
+          <div class="collab-meta">${c.poste || ''} · ${c.anciennete || ''} · ${nbE} entretien${nbE>1?'s':''}</div>
+        </div>
+        <div class="collab-actions">
+          <button class="btn-edit" onclick="ouvrirModif('${c.id}')" title="Modifier">✏️</button>
+          <button class="btn-delete" onclick="demanderSuppression('${c.id}')" title="Supprimer">🗑️</button>
+        </div>
+      </div>`;
+  }).join('');
 }
 
-function confirmQuit() {
-  if (confirm('Abandonner la session en cours ?\nLes données ne seront pas sauvegardées.')) {
-    clearInterval(STATE.timerInterval);
-    Object.assign(STATE, { step:0, bloc1Subject:'', bloc2Subject:'', chatHistory:[], bloc1Score:null, bloc2Score:null, sessionBadges:[], sessionDate: new Date().toLocaleDateString('fr-FR') });
-    showScreen('screen-welcome');
+function filterCollabs() {
+  const q = document.getElementById('search-input').value.toLowerCase();
+  renderCollabs(collabsData.filter(c =>
+    (c.nom||'').toLowerCase().includes(q) || (c.poste||'').toLowerCase().includes(q)
+  ));
+}
+
+function renderAlertes(alertes) {
+  const div = document.getElementById('alertes-list');
+  if (!alertes.length) {
+    div.innerHTML = '<div class="loading">✅ Aucune alerte pour le moment</div>';
+    return;
   }
+  const typeClass = { anniversaire: 'success', action: 'info' };
+  div.innerHTML = alertes.map((a, i) => `
+    <div class="alert-card ${typeClass[a.type]||''}" id="alert-${i}">
+      <div class="alert-icon">${a.icone}</div>
+      <div style="flex:1">
+        <div class="alert-title">${a.titre}</div>
+        <div class="alert-desc">${a.desc}</div>
+        ${a.type === 'action' ? `
+        <div class="alert-btns">
+          <button class="btn-done" onclick="actionFaite(${i}, '${a.collabId}')">✅ C'est fait !</button>
+          <button class="btn-ko" onclick="actionKO(${i}, '${a.collabId}')">❌ Je ne ferai pas</button>
+        </div>` : ''}
+      </div>
+    </div>`).join('');
 }
 
-function openApiSettings() {
-  // Show a small modal to update the API key
-  const current = CLAUDE_API_KEY ? CLAUDE_API_KEY.substring(0,20)+'...' : 'Non configurée';
-  const newKey = prompt(`Clé API actuelle : ${current}\n\nColle ta nouvelle clé API Anthropic (sk-ant-...)`);
-  if (newKey && newKey.trim().startsWith('sk-ant-')) {
-    CLAUDE_API_KEY = newKey.trim();
-    localStorage.setItem('claude_api_key', newKey.trim());
-    alert('✅ Clé API mise à jour !');
-  } else if (newKey !== null) {
-    alert('❌ Clé invalide — doit commencer par sk-ant-');
-  }
+function updateStats(collabs, entretiens, alertes) {
+  document.getElementById('stat-total').textContent = collabs.length;
+  document.getElementById('stat-entretiens').textContent = entretiens.length;
+  document.getElementById('stat-alertes').textContent = alertes.filter(a => a.urgence === 'haute').length;
 }
 
-// ── SHEETS ──
-function updateSyncBadge(status) {
-  const el = document.getElementById('sync-status');
-  if (!el) return;
-  if (!SHEETS_URL) { el.className='sync-status sync-off'; el.textContent='☁️ Sheets'; return; }
-  if (status==='ok')   { el.className='sync-status sync-ok';   el.textContent='✅ Sheets'; STATE.sheetsConnected=true; }
-  else if (status==='err')  { el.className='sync-status sync-err';  el.textContent='❌ Sheets'; STATE.sheetsConnected=false; }
-  else if (status==='wait') { el.className='sync-status sync-wait'; el.textContent='⏳ Sync…'; }
-  else                      { el.className='sync-status sync-wait'; el.textContent='☁️ Sheets'; }
+function updateCollabSelect() {
+  const sel = document.getElementById('form-collab');
+  sel.innerHTML = '<option value="">Sélectionner...</option>' +
+    collabsData.map(c => `<option value="${c.id}">${c.nom}</option>`).join('');
 }
 
-async function sheetsCall(action, data) {
-  if (!SHEETS_URL) return null;
+// ============================================================
+// MODIFIER COLLABORATEUR
+// ============================================================
+function ouvrirModif(id) {
+  const c = collabsData.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('edit-id').value = c.id;
+  document.getElementById('edit-nom').value = c.nom || '';
+  document.getElementById('edit-poste').value = c.poste || '';
+  document.getElementById('edit-anciennete').value = c.anciennete || '';
+  document.getElementById('edit-naissance').value = c.dateNaissance || '';
+  document.getElementById('edit-equipe').value = c.equipe || '';
+  document.getElementById('edit-perso').value = c.infosPerso || '';
+  document.getElementById('modal-edit').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('modal-edit').classList.remove('active');
+}
+
+async function sauvegarderModif() {
+  const id = document.getElementById('edit-id').value;
+  const nom = document.getElementById('edit-nom').value.trim();
+  if (!nom) { showToast('⚠️ Nom requis'); return; }
   try {
-    updateSyncBadge('wait');
-    const res = await fetch(SHEETS_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action,data}) });
-    const json = await res.json();
-    updateSyncBadge(json.success ? 'ok' : 'err');
-    return json;
-  } catch(e) { updateSyncBadge('err'); return null; }
+    await callScript('saveCollab', { data: {
+      id,
+      nom,
+      poste: document.getElementById('edit-poste').value,
+      anciennete: document.getElementById('edit-anciennete').value,
+      equipe: document.getElementById('edit-equipe').value,
+      dateNaissance: document.getElementById('edit-naissance').value,
+      infosPerso: document.getElementById('edit-perso').value,
+      avatarInitiale: nom[0].toUpperCase(),
+    }});
+    closeModal();
+    showToast('✅ ' + nom + ' mis à jour !');
+    await loadAll();
+  } catch(e) {
+    showToast('❌ ' + e.message);
+  }
 }
 
-async function sheetsGet(action) {
-  if (!SHEETS_URL) return null;
+// ============================================================
+// SUPPRIMER COLLABORATEUR
+// ============================================================
+function demanderSuppression(id) {
+  const c = collabsData.find(x => x.id === id);
+  if (!c) return;
+  collabToDelete = id;
+  document.getElementById('confirm-desc').textContent =
+    `Supprimer ${c.nom} de la base ? Ses entretiens seront conservés dans Google Sheets.`;
+  document.getElementById('confirm-delete').classList.add('active');
+}
+
+function closeConfirm() {
+  document.getElementById('confirm-delete').classList.remove('active');
+  collabToDelete = null;
+}
+
+async function confirmerSuppression() {
+  if (!collabToDelete) return;
   try {
-    const res = await fetch(`${SHEETS_URL}?action=${action}`);
-    const json = await res.json();
-    updateSyncBadge(json.success ? 'ok' : 'err');
-    return json;
-  } catch(e) { updateSyncBadge('err'); return null; }
-}
-
-function openSetupModal() {
-  document.getElementById('setup-modal').classList.remove('hidden');
-  document.getElementById('sheets-url-input').value = SHEETS_URL;
-  document.getElementById('setup-test-result').style.display = 'none';
-}
-function closeSetupModal() { document.getElementById('setup-modal').classList.add('hidden'); }
-
-async function saveAndTestSheetsUrl() {
-  const url = document.getElementById('sheets-url-input').value.trim();
-  const resultEl = document.getElementById('setup-test-result');
-  resultEl.style.display = 'block';
-  resultEl.innerHTML = '<span style="color:#fbbf24">⏳ Test...</span>';
-  if (!url.startsWith('https://script.google.com/macros/')) {
-    resultEl.innerHTML = '<span style="color:#f87171">❌ URL invalide</span>'; return;
+    await callScript('deleteCollab', { collabId: collabToDelete });
+    closeConfirm();
+    showToast('🗑️ Collaborateur supprimé');
+    await loadAll();
+  } catch(e) {
+    // Suppression locale si le script ne supporte pas encore
+    collabsData = collabsData.filter(c => c.id !== collabToDelete);
+    renderCollabs(collabsData);
+    closeConfirm();
+    showToast('🗑️ Supprimé localement — pense à supprimer la ligne dans Google Sheets');
   }
-  SHEETS_URL = url; localStorage.setItem('sheets_url', url);
+}
+
+// ============================================================
+// DETAIL
+// ============================================================
+function openDetail(id) {
+  currentCollab = collabsData.find(c => c.id === id);
+  if (!currentCollab) return;
+  const sesEntretiens = entretiensData.filter(e => e.collabId === id)
+    .sort((a,b) => new Date(b.date) - new Date(a.date));
+  const i = collabsData.indexOf(currentCollab);
+  const color = COLORS[i % COLORS.length];
+
+  document.getElementById('main-app').style.display = 'none';
+  document.getElementById('main-fab').style.display = 'none';
+  document.getElementById('detail-view').style.display = 'block';
+  document.getElementById('detail-name').textContent = currentCollab.nom;
+  document.getElementById('detail-sub').textContent = (currentCollab.poste||'') + ' · ' + (currentCollab.anciennete||'');
+  document.getElementById('detail-avatar').textContent = (currentCollab.nom||'?')[0].toUpperCase();
+  document.getElementById('detail-avatar').className = 'avatar ' + color;
+
+  const equipe = currentCollab.equipe || '';
+  const chips = [currentCollab.poste, currentCollab.anciennete,
+    equipe ? '🕐 Équipe ' + equipe : null,
+    currentCollab.dateNaissance ? '🎂 ' + currentCollab.dateNaissance : null]
+    .filter(Boolean).map(c => `<div class="chip">${c}</div>`).join('');
+  document.getElementById('detail-chips').innerHTML = chips;
+  document.getElementById('detail-perso').textContent = currentCollab.infosPerso || 'Aucune info personnelle enregistrée.';
+  document.getElementById('detail-timeline').innerHTML = sesEntretiens.length
+    ? sesEntretiens.map(e => `
+        <div class="tl-item">
+          <div class="tl-date">📅 ${e.date}</div>
+          <div class="tl-content">${e.contenu}</div>
+          ${e.detailRetenir ? `<div style="margin-top:8px;font-size:13px;background:#fef9e7;padding:8px 10px;border-radius:8px;">✨ ${e.detailRetenir}</div>` : ''}
+          ${e.actionAFaire ? `<div style="margin-top:6px;font-size:13px;background:#e8eef5;padding:8px 10px;border-radius:8px;">🎯 ${e.actionAFaire}</div>` : ''}
+          <div class="tl-tags">${(e.tags||'').split(',').filter(Boolean).map(t=>`<span class="tl-tag ${t}">${tagLabel(t)}</span>`).join('')}</div>
+          <div style="margin-top:10px;text-align:right;">
+            <button class="btn-edit" style="font-size:12px;padding:6px 12px;width:auto;border-radius:8px;" onclick="ouvrirEditEntretien('${e.id}','${e.collabId}')">✏️ Modifier</button>
+          </div>
+        </div>`).join('')
+    : '<div class="loading">Aucun entretien enregistré</div>';
+
+  document.getElementById('ia-detail-input').value = '';
+  document.getElementById('ia-detail-response').className = 'ai-response';
+  window.scrollTo(0,0);
+}
+
+function closeDetail() {
+  document.getElementById('detail-view').style.display = 'none';
+  document.getElementById('main-app').style.display = 'block';
+  document.getElementById('main-fab').style.display = 'flex';
+}
+
+function tagLabel(t) {
+  const l={motivation:'💪 Motivation',tension:'⚠️ Tension',perso:'👤 Vie perso',objectif:'🎯 Objectif',formation:'📚 Formation',qualite:'✅ Qualité',conge:'🏖️ Congés',sante:'❤️ Santé'};
+  return l[t]||t;
+}
+
+// ============================================================
+// SAVE ENTRETIEN
+// ============================================================
+async function saveEntretien() {
+  const collabId = document.getElementById('form-collab').value;
+  const contenu = document.getElementById('form-content').value;
+  if (!collabId || !contenu) { showToast('⚠️ Collaborateur et notes requis'); return; }
+  const btn = document.getElementById('save-btn');
+  btn.disabled = true; btn.textContent = '⏳ Enregistrement...';
+  const collab = collabsData.find(c => c.id === collabId);
   try {
-    const res = await fetch(`${url}?action=ping`);
-    const json = await res.json();
-    if (json.success) {
-      resultEl.innerHTML = `<span style="color:var(--green)">✅ ${json.message||'Connexion réussie !'}</span>`;
-      updateSyncBadge('ok'); setTimeout(() => closeSetupModal(), 1500);
-    } else { resultEl.innerHTML=`<span style="color:#f87171">❌ ${json.error}</span>`; updateSyncBadge('err'); }
-  } catch(e) { resultEl.innerHTML='<span style="color:#f87171">❌ Impossible de contacter le script.</span>'; updateSyncBadge('err'); }
+    await callScript('saveEntretien', { data: {
+      collabId, collabNom: collab?.nom || '',
+      date: document.getElementById('form-date').value,
+      contenu, tags: selectedTags,
+      detailRetenir: document.getElementById('form-detail').value,
+      actionAFaire: document.getElementById('form-action').value,
+    }});
+    showToast('✅ Entretien enregistré !');
+    document.getElementById('form-content').value = '';
+    document.getElementById('form-detail').value = '';
+    document.getElementById('form-action').value = '';
+    selectedTags = [];
+    document.querySelectorAll('.tag-btn.selected').forEach(b => b.classList.remove('selected'));
+    await loadAll();
+  } catch(e) { showToast('❌ ' + e.message); }
+  btn.disabled = false; btn.textContent = '💾 Enregistrer';
 }
 
-// ── NAV ──
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-function startSession() { showScreen('screen-app'); renderStep0(); }
-function showParent() {
-  showScreen('screen-parent');
-  document.getElementById('parent-login').classList.remove('hidden');
-  document.getElementById('parent-dashboard').classList.add('hidden');
-  document.getElementById('parent-pw').value = '';
-}
-function checkParentPW() {
-  if (document.getElementById('parent-pw').value === PARENT_PASSWORD) {
-    document.getElementById('parent-login').classList.add('hidden');
-    document.getElementById('parent-dashboard').classList.remove('hidden');
-    refreshParentData();
-  } else {
-    document.getElementById('parent-pw').style.borderColor = 'var(--accent2)';
-    document.getElementById('parent-pw').placeholder = 'Mot de passe incorrect...';
-  }
-}
-
-// ── PROGRESS ──
-function updateProgress(n) {
-  for (let i=1;i<=6;i++) {
-    const d=document.getElementById('step-'+i);
-    d.className = i<n?'step-dot done':i===n?'step-dot active':'step-dot';
-  }
-  document.getElementById('progress-text').textContent=`Étape ${n}/6`;
-  const b=document.getElementById('bloc-indicator');
-  if (n<=3) b.innerHTML='<span class="bloc-badge bloc1-badge">📚 Bloc 1 — Devoirs</span>';
-  else if (n===4) b.innerHTML='<span class="bloc-badge bloc2-badge">🎯 Transition</span>';
-  else b.innerHTML='<span class="bloc-badge bloc2-badge">🏆 Bloc 2 — Brevet</span>';
-}
-
-// ── STEP 0 ──
-function renderStep0() {
-  updateProgress(1);
-  document.getElementById('main-content').innerHTML = `
-    <div class="step-header"><div class="step-icon icon-purple">📚</div>
-    <div><div class="step-title">Salut Alexandre ! 👋</div>
-    <div class="step-desc">Quelle matière tu veux travailler aujourd'hui ?</div></div></div>
-    <div class="card"><div class="subject-grid">
-      ${SUBJECTS.map(s=>`<button class="subject-btn" onclick="selectSubject('${s.id}','${s.label}','${s.icon}')">
-        <span class="subj-icon">${s.icon}</span>${s.label}</button>`).join('')}
-    </div></div>`;
-}
-
-function selectSubject(id,label,icon) {
-  STATE.bloc1Subject=label;
-  document.querySelectorAll('.subject-btn').forEach(b=>b.classList.remove('selected'));
-  event.target.closest('.subject-btn').classList.add('selected');
-  setTimeout(()=>renderStep1(label,icon),300);
-}
-
-// ── STEP 1 ──
-function renderStep1(subject,icon) {
-  updateProgress(2);
-  document.getElementById('main-content').innerHTML = `
-    <div class="step-header"><div class="step-icon icon-purple">${icon}</div>
-    <div><div class="step-title">${subject}</div>
-    <div class="step-desc">Décris ce que tu as à faire...</div></div></div>
-    <div class="card">
-      <textarea class="input-area" id="hw-desc" placeholder="Ex: contrôle sur les équations demain, je comprends pas isoler x..." rows="4"></textarea>
-      <div style="display:flex;gap:.75rem;margin-top:1rem;justify-content:flex-end">
-        <button class="btn-secondary" onclick="renderStep0()">← Changer</button>
-        <button class="btn-primary" onclick="startBloc1()">C'est parti ! 🚀</button>
-      </div>
-    </div>`;
-}
-
-// ── BLOC 1 ──
-async function startBloc1() {
-  const desc=document.getElementById('hw-desc').value.trim();
-  if (!desc){document.getElementById('hw-desc').style.borderColor='var(--accent2)';return;}
-  updateProgress(3); STATE.step=2; STATE.chatHistory=[];
-  renderChatUI('💬',`📚 Bloc 1 — ${STATE.bloc1Subject}`,'30 min · Cours + Révision + Exercice');
-  startTimer(30*60);
-  // Afficher ressources
-  setTimeout(() => {
-    const el = document.getElementById('ressources-area');
-    if (el) el.innerHTML = getRessourcesHTML(STATE.bloc1Subject);
-  }, 100);
-  STATE.chatHistory=[{role:'user',content:`MATIÈRE : ${STATE.bloc1Subject}\nDEVOIRS : ${desc}\n\nLance la session :\n1. 📘 RAPPEL DE COURS\n2. 🔁 3 questions révision (une à la fois)\n3. ✏️ Exercice noté sur 10\n\nCommence par le RAPPEL DE COURS.`}];
-  await callClaude();
-}
-
-// ── TRANSITION ──
-function showTransition() {
-  clearInterval(STATE.timerInterval); updateProgress(4); STATE.step=3;
-  const others=SUBJECTS.filter(s=>s.label!==STATE.bloc1Subject);
-  const pick=others[Math.floor(Math.random()*others.length)];
-  STATE.bloc2Subject=pick.label;
-  document.getElementById('main-content').innerHTML=`
-    <div class="bloc-transition">
-      <div style="font-size:2rem">🎉</div><h2>Bloc 1 terminé !</h2>
-      <p style="color:var(--muted);margin:.5rem 0 1rem">Excellent travail Alexandre ! 🧠💪</p>
-      <p style="background:rgba(255,101,132,.1);border:1px solid rgba(255,101,132,.3);border-radius:10px;padding:.8rem 1.2rem;margin-bottom:1.5rem">
-        🎯 Matière tirée au sort : <strong style="color:var(--accent2)">${pick.icon} ${pick.label}</strong></p>
-      <button class="btn-primary" onclick="startBloc2('${pick.label}','${pick.icon}')">Démarrer le Bloc 2 →</button>
-    </div>`;
-}
-
-// ── BLOC 2 ──
-async function startBloc2(subject,icon) {
-  updateProgress(5); STATE.step=4; STATE.chatHistory=[];
-  renderChatUI(icon,`🏆 Bloc 2 — ${subject}`,'30 min · Fiche + Quiz + Mini-épreuve');
-  startTimer(30*60);
-  setTimeout(() => {
-    const el = document.getElementById('ressources-area');
-    if (el) el.innerHTML = getRessourcesHTML(subject);
-  }, 100);
-  STATE.chatHistory=[{role:'user',content:`BLOC 2 — RÉVISION BREVET\nMATIÈRE : ${subject}\n\nLance :\n1. 📋 FICHE DE RÉVISION\n2. 🧠 QUIZ BREVET (5 questions une à la fois)\n3. 📝 MINI-ÉPREUVE avec barème\n\nCommence par la FICHE DE RÉVISION.`}];
-  await callClaude();
-}
-
-// ── CHAT UI ──
-function renderChatUI(icon,title,desc) {
-  document.getElementById('main-content').innerHTML=`
-    <div class="step-header"><div class="step-icon icon-purple">${icon}</div>
-    <div><div class="step-title">${title}</div><div class="step-desc">${desc}</div></div></div>
-    <div id="ressources-area"></div>
-    <div class="timer-bar"><span class="timer-icon">⏱️</span>
-    <div class="timer-track"><div class="timer-fill" id="timer-fill" style="width:100%"></div></div>
-    <span class="timer-text" id="timer-text">30:00</span></div>
-    <div class="chat-container" id="chat-area"></div>
-    <div class="input-row">
-      <textarea class="input-area" id="chat-input" placeholder="Ta réponse..." rows="1"
-        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
-      <button class="btn-send" id="send-btn" onclick="sendMessage()">➤</button>
-    </div>
-    <div style="text-align:center;padding:.5rem 0 1rem">
-      <button onclick="confirmQuit()" style="background:none;border:none;color:var(--muted);font-size:.78rem;cursor:pointer;text-decoration:underline">
-        ✕ Abandonner la session
-      </button>
-    </div>`;
-}
-
-// ── FIN SESSION ──
-async function showSessionEnd() {
-  clearInterval(STATE.timerInterval); updateProgress(6); STATE.step=5;
-  checkBadges();
-  STATE.sessions.push({date:STATE.sessionDate,bloc1:{matiere:STATE.bloc1Subject,score:STATE.bloc1Score},bloc2:{matiere:STATE.bloc2Subject,score:STATE.bloc2Score},badges:STATE.sessionBadges});
-  localStorage.setItem('alex_sessions',JSON.stringify(STATE.sessions));
-  localStorage.setItem('alex_badges',STATE.badgeCount);
-  const payload=buildSessionPayload();
-  let syncMsg='';
-  if (SHEETS_URL) {
-    updateSyncBadge('wait');
-    const result=await sheetsCall('saveSession',payload);
-    syncMsg=result?.success
-      ?`<div class="cloud-indicator" style="justify-content:center;margin:1rem 0"><span>✅</span><span>Session #${result.sessionNumber} sauvegardée dans Google Sheets</span></div>`
-      :`<div class="cloud-indicator" style="justify-content:center;margin:1rem 0;border-color:rgba(248,113,113,.3)"><span>⚠️</span><span>Sauvegarde locale uniquement</span></div>`;
-  } else {
-    syncMsg=`<div class="cloud-indicator" style="justify-content:center;margin:1rem 0"><span>💾</span><span>Données locales · <a href="#" onclick="openSetupModal();return false" style="color:var(--accent)">Configurer Google Sheets</a></span></div>`;
-  }
-  document.getElementById('main-content').innerHTML=`
-    <div class="end-card">
-      <div class="end-emoji">🏆</div><div class="end-title">Session terminée !</div>
-      <p style="color:var(--muted);margin-bottom:1rem">Excellent travail aujourd'hui, Alexandre ! 💪</p>
-      ${syncMsg}
-      <div class="end-stats">
-        <div class="stat-box"><div class="stat-num">${STATE.bloc1Score!==null?STATE.bloc1Score+'/10':'✓'}</div><div class="stat-label">Bloc 1 · ${STATE.bloc1Subject}</div></div>
-        <div class="stat-box"><div class="stat-num">${STATE.bloc2Score!==null?STATE.bloc2Score+'/5':'✓'}</div><div class="stat-label">Bloc 2 · ${STATE.bloc2Subject}</div></div>
-        <div class="stat-box"><div class="stat-num">${STATE.sessions.length}</div><div class="stat-label">Sessions totales</div></div>
-        <div class="stat-box"><div class="stat-num">${STATE.badgeCount}</div><div class="stat-label">Badges gagnés</div></div>
-      </div>
-      ${STATE.sessionBadges.length>0?`<p style="font-family:var(--font-head);font-weight:700;margin-bottom:.75rem">🎖️ Badges débloqués !</p>
-        <div class="badges-row">${STATE.sessionBadges.map(b=>`<div class="badge-chip">${b}</div>`).join('')}</div>`:''}
-      <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem">
-        <button class="btn-primary" onclick="newSession()">🔄 Nouvelle session</button>
-        <button class="btn-secondary" onclick="toggleJSON()">📊 JSON</button>
-      </div>
-      <div id="json-display" class="hidden">
-        <button class="collapsible-toggle" onclick="toggleJSON()">Masquer ↑</button>
-        <div class="json-block">${JSON.stringify(payload,null,2).replace(/</g,'&lt;')}</div>
-      </div>
-    </div>`;
-  STATE.sessionBadges.forEach((b,i)=>setTimeout(()=>showBadgeToast(b),i*1500));
-}
-
-function toggleJSON(){document.getElementById('json-display').classList.toggle('hidden');}
-function newSession(){
-  Object.assign(STATE,{step:0,bloc1Subject:'',bloc2Subject:'',chatHistory:[],bloc1Score:null,bloc2Score:null,sessionBadges:[],sessionDate:new Date().toLocaleDateString('fr-FR')});
-  clearInterval(STATE.timerInterval); renderStep0();
-}
-
-// ── CLAUDE API ──
-function getSystemPrompt(){
-  return `Tu es un assistant pédagogique expert pour élèves de 3ème. Tu t'adresses à Alexandre, 14 ans.
-
-RÈGLES ABSOLUES :
-- Toujours positif, langage ado, prénom "Alexandre" régulièrement, célèbre chaque progrès
-- En cas d'erreur : "Ce n'est pas grave, voici comment on comprend ça..."
-- TRÈS IMPORTANT : tu poses UNE SEULE chose à la fois et tu ATTENDS la réponse d'Alexandre avant de continuer
-- Ne jamais enchaîner cours + questions + exercice dans le même message
-- Chaque message doit se terminer par une question ou une consigne claire
-
-FORMAT : titres avec émojis (📘 RAPPEL DE COURS, 🔁 RÉVISION GUIDÉE, ✏️ EXERCICE), puces, **gras** pour points-clés.
-
-DÉROULEMENT BLOC 1 — STRICTEMENT dans cet ordre, UN MESSAGE PAR ÉTAPE :
-1. 📘 RAPPEL DE COURS : explique la notion (max 15 lignes). Termine par "Tu as compris ? Dis-moi si tu as des questions, sinon on passe aux exercices !"
-2. Attends la réponse d'Alexandre
-3. 🔁 QUESTION 1/3 : pose la première question de révision. Attends sa réponse.
-4. Corrige la question 1, encourage, pose la QUESTION 2/3. Attends.
-5. Corrige la question 2, encourage, pose la QUESTION 3/3. Attends.
-6. Corrige la question 3, puis lance ✏️ L'EXERCICE noté sur 10. Attends la réponse.
-7. Corrige l'exercice, affiche "SCORE : X/10", donne un feedback personnalisé.
-8. Seulement après la correction de l'exercice, termine ton message par ###BLOC1_COMPLETE###
-
-DÉROULEMENT BLOC 2 — STRICTEMENT dans cet ordre, UN MESSAGE PAR ÉTAPE :
-1. 📋 FICHE DE RÉVISION : fiche synthétique sur une notion clé. Termine par "Prêt pour le quiz ?"
-2. Attends la réponse d'Alexandre
-3. 🧠 QUESTION QUIZ 1/5. Attends.
-4. Corrige, pose QUESTION 2/5. Attends. (répète jusqu'à 5/5)
-5. Après question 5 corrigée, affiche "SCORE : X/5" et lance 📝 LA MINI-ÉPREUVE. Attends.
-6. Corrige la mini-épreuve avec barème détaillé.
-7. Seulement après la correction, termine par ###BLOC2_COMPLETE###
-
-SCORES : affiche toujours "SCORE : X/10" ou "SCORE : X/5" sur une ligne séparée bien visible.
-JAMAIS de ###BLOC1_COMPLETE### ou ###BLOC2_COMPLETE### avant d'avoir terminé toutes les étapes ET reçu les réponses d'Alexandre.`;
-}
-
-async function callClaude(){
-  const chatArea=document.getElementById('chat-area');
-  const sendBtn=document.getElementById('send-btn');
-  if(sendBtn) sendBtn.disabled=true;
-  const loadingEl=document.createElement('div');
-  loadingEl.className='msg msg-ai';
-  loadingEl.innerHTML='<div class="loading-dots"><span></span><span></span><span></span></div>';
-  chatArea.appendChild(loadingEl);
-  chatArea.scrollTop=chatArea.scrollHeight;
+// ============================================================
+// AJOUTER COLLAB
+// ============================================================
+async function ajouterCollab() {
+  const nom = document.getElementById('nc-nom').value.trim();
+  if (!nom) { showToast('⚠️ Nom requis'); return; }
   try {
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key': CLAUDE_API_KEY,
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access':'true'
-      },
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,system:getSystemPrompt(),messages:STATE.chatHistory})
-    });
-    const data=await res.json();
-    if(data.error){loadingEl.innerHTML=`<p style="color:var(--accent2)">⚠️ Erreur API : ${data.error.message}</p>`;if(sendBtn)sendBtn.disabled=false;return;}
-    const text=data.content?.[0]?.text||'Erreur.';
-    loadingEl.remove();
-    let displayText=text;
-    const b1=text.includes('###BLOC1_COMPLETE###');
-    const b2=text.includes('###BLOC2_COMPLETE###');
-    if(b1) displayText=text.replace('###BLOC1_COMPLETE###','').trim();
-    if(b2) displayText=text.replace('###BLOC2_COMPLETE###','').trim();
-    const sm=displayText.match(/SCORE\s*:\s*(\d+)\s*\/\s*(10|5)/i);
-    if(sm){if(sm[2]==='10')STATE.bloc1Score=parseInt(sm[1]);if(sm[2]==='5')STATE.bloc2Score=parseInt(sm[1]);}
-    STATE.chatHistory.push({role:'assistant',content:text});
-    const msgEl=document.createElement('div');
-    msgEl.className='msg msg-ai';
-    msgEl.innerHTML=formatAIText(displayText);
-    chatArea.appendChild(msgEl);
-    chatArea.scrollTop=chatArea.scrollHeight;
-    if(b1) setTimeout(()=>showTransition(),1200);
-    else if(b2) setTimeout(()=>showSessionEnd(),1200);
-  } catch(e){loadingEl.innerHTML=`<p style="color:var(--accent2)">⚠️ Erreur : ${e.message}</p>`;}
-  if(sendBtn) sendBtn.disabled=false;
+    await callScript('saveCollab', { data: {
+      nom,
+      poste: document.getElementById('nc-poste').value,
+      anciennete: document.getElementById('nc-anciennete').value,
+      equipe: document.getElementById('nc-equipe').value,
+      dateNaissance: document.getElementById('nc-naissance').value,
+      infosPerso: document.getElementById('nc-perso').value,
+      avatarInitiale: nom[0].toUpperCase(),
+    }});
+    showToast('✅ ' + nom + ' ajouté !');
+    ['nc-nom','nc-poste','nc-anciennete','nc-naissance','nc-perso'].forEach(id => document.getElementById(id).value = '');
+    await loadAll();
+  } catch(e) { showToast('❌ ' + e.message); }
 }
 
-async function sendMessage(){
-  const input=document.getElementById('chat-input');
-  if(!input) return;
-  const text=input.value.trim();
-  if(!text) return;
-  const chatArea=document.getElementById('chat-area');
-  const userEl=document.createElement('div');
-  userEl.className='msg msg-user';
-  userEl.textContent=text;
-  chatArea.appendChild(userEl);
-  chatArea.scrollTop=chatArea.scrollHeight;
-  input.value='';
-  STATE.chatHistory.push({role:'user',content:text});
-  await callClaude();
+// ============================================================
+// IA
+// ============================================================
+async function askIAGlobal() {
+  const input = document.getElementById('ia-global-input');
+  const respDiv = document.getElementById('ia-global-response');
+  const question = input.value.trim();
+  if (!question) return;
+  respDiv.className = 'ai-response visible';
+  respDiv.innerHTML = '<div class="ai-thinking"><span></span><span></span><span></span></div>';
+  try {
+    const context = collabsData.map(c => {
+      const es = entretiensData.filter(e=>e.collabId===c.id).slice(0,3).map(e=>`[${e.date}] ${e.contenu}`).join(' | ');
+      return `${c.nom} (${c.poste}, équipe ${c.equipe||'non renseignée'}) — ${c.infosPerso} — ${es||'aucun entretien'}`;
+    }).join('\n');
+    const result = await callScript('askClaude', { question, context });
+    respDiv.innerHTML = result.replace(/\n/g,'<br>');
+  } catch(e) { respDiv.innerHTML = '❌ ' + e.message; }
 }
 
-function formatAIText(text){
-  let html=text
-    .replace(/^#{1,3}\s*(.+)$/gm,'<h3>$1</h3>')
-    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g,'<em>$1</em>')
-    .replace(/^[-•]\s+(.+)$/gm,'<li>$1</li>')
-    .replace(/(SCORE\s*:\s*\d+\s*\/\s*(?:10|5))/gi,'<span style="font-family:var(--font-head);font-size:1.2rem;font-weight:800;color:var(--green)">🎯 $1</span>')
-    .replace(/^(\d+)\.\s+(.+)$/gm,'<li><strong>$1.</strong> $2</li>')
-    .replace(/((<li>.*?<\/li>[\n]?)+)/gs,'<ul>$1</ul>')
-    .replace(/\n\n+/g,'</p><p>')
-    .replace(/\n/g,'<br>');
-  return `<p>${html}</p>`;
+async function askIADetail() {
+  if (!currentCollab) return;
+  const input = document.getElementById('ia-detail-input');
+  const respDiv = document.getElementById('ia-detail-response');
+  const question = input.value.trim();
+  if (!question) return;
+  respDiv.className = 'ai-response visible';
+  respDiv.innerHTML = '<div class="ai-thinking"><span></span><span></span><span></span></div>';
+  try {
+    const sesEntretiens = entretiensData.filter(e => e.collabId === currentCollab.id);
+    const context = `Collaborateur: ${currentCollab.nom} (${currentCollab.poste}, ${currentCollab.anciennete}, équipe ${currentCollab.equipe||'non renseignée'})\nInfos perso: ${currentCollab.infosPerso}\nEntretiens: ${sesEntretiens.map(e=>`[${e.date}] ${e.contenu}`).join(' | ')}`;
+    const result = await callScript('askClaude', { question, context });
+    respDiv.innerHTML = result.replace(/\n/g,'<br>');
+  } catch(e) { respDiv.innerHTML = '❌ ' + e.message; }
 }
 
-function startTimer(totalSeconds){
-  clearInterval(STATE.timerInterval);
-  let remaining=totalSeconds;
-  STATE.timerInterval=setInterval(()=>{
-    remaining--;
-    if(remaining<0){clearInterval(STATE.timerInterval);return;}
-    const mins=Math.floor(remaining/60),secs=remaining%60;
-    const tt=document.getElementById('timer-text');
-    const tf=document.getElementById('timer-fill');
-    if(tt) tt.textContent=`${mins}:${secs.toString().padStart(2,'0')}`;
-    if(tf){const pct=(remaining/totalSeconds)*100;tf.style.width=pct+'%';if(pct<20)tf.style.background='var(--accent2)';}
-  },1000);
+function setQ(q) { document.getElementById('ia-global-input').value=q; switchTab('ia'); }
+
+// ============================================================
+// CONFIG
+// ============================================================
+function saveConfig() {
+  SCRIPT_URL = document.getElementById('config-url').value.trim();
+  localStorage.setItem('teampulse_url', SCRIPT_URL);
 }
 
-function checkBadges(){
-  const total=STATE.sessions.length+1;
-  const has=name=>STATE.sessions.some(s=>s.badges?.includes(name))||STATE.sessionBadges.includes(name);
-  if(total===1) addBadge('🥇 Première Leçon');
-  if(STATE.bloc1Score===10) addBadge('⭐ Sans Faute');
-  if(STATE.bloc1Score>=8){const cnt=STATE.sessions.filter(s=>s.bloc1?.matiere===STATE.bloc1Subject&&s.bloc1?.score>=8).length;if(cnt>=4)addBadge(`🏆 Expert ${STATE.bloc1Subject}`);}
-  if(total>=10&&!has('📚 Studieux'))     addBadge('📚 Studieux');
-  if(total>=3 &&!has('🔥 Série x3'))     addBadge('🔥 Série x3');
-  if(total>=7 &&!has('🔥🔥 Série x7'))  addBadge('🔥🔥 Série x7');
-  if(total>=20&&!has('🎯 Brevet Ready')) addBadge('🎯 Brevet Ready');
-  if(total>=30&&!has('💪 Persévérant'))  addBadge('💪 Persévérant');
+async function testerConnexion() {
+  const url = document.getElementById('config-url').value.trim();
+  if (!url) { showToast('⚠️ Entre d\'abord l\'URL'); return; }
+  SCRIPT_URL = url;
+  const res = document.getElementById('test-result');
+  res.style.display = 'block'; res.style.background = '#fef9e7';
+  res.textContent = '⏳ Test en cours...';
+  try {
+    const resp = await fetch(url);
+    const data = await resp.json();
+    res.style.background = '#e8f5ee';
+    res.textContent = '✅ Connexion OK ! ' + (data.status || '');
+    localStorage.setItem('teampulse_url', url);
+    await loadAll();
+  } catch(e) {
+    res.style.background = '#fdecea';
+    res.textContent = '❌ Erreur : ' + e.message;
+  }
 }
 
-function addBadge(badge){
-  if(STATE.sessionBadges.includes(badge))return;
-  STATE.sessionBadges.push(badge);STATE.badgeCount++;
-  document.getElementById('badge-count-display').textContent=STATE.badgeCount;
+// ============================================================
+// UTILS
+// ============================================================
+function toggleTag(btn, tag) {
+  btn.classList.toggle('selected');
+  if (selectedTags.includes(tag)) selectedTags = selectedTags.filter(t=>t!==tag);
+  else selectedTags.push(tag);
 }
 
-function showBadgeToast(badge){
-  const toast=document.getElementById('badge-toast');
-  document.getElementById('toast-icon').textContent=badge.split(' ')[0];
-  document.getElementById('toast-title').textContent=badge;
-  document.getElementById('toast-sub').textContent='Bravo Alexandre ! Continue ! 🔥';
-  toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),3000);
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    const tabs = ['equipe','alertes','ajouter','ia','config'];
+    t.classList.toggle('active', tabs[i]===tab);
+  });
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+tab).classList.add('active');
 }
 
-function buildSessionPayload(){
-  return {
-    date:STATE.sessionDate, duree_totale_minutes:60,
-    bloc1:{matiere:STATE.bloc1Subject,score_exercice:STATE.bloc1Score,note_sur_10:STATE.bloc1Score,badges_gagnes:[]},
-    bloc2:{matiere_aleatoire:STATE.bloc2Subject,score_quiz:STATE.bloc2Score,note_sur_5:STATE.bloc2Score,badges_gagnes:[]},
-    badges_totaux_session:STATE.sessionBadges,
-    commentaire_pedagogique:`Session du ${STATE.sessionDate}. Bloc1: ${STATE.bloc1Subject} (${STATE.bloc1Score??'N/A'}/10). Bloc2: ${STATE.bloc2Subject} (${STATE.bloc2Score??'N/A'}/5).`
-  };
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2500);
 }
 
-async function refreshParentData(){
-  const icon=document.getElementById('parent-cloud-icon');
-  const txt=document.getElementById('parent-cloud-text');
-  if(icon)icon.textContent='⏳';if(txt)txt.textContent='Chargement...';
-  if(SHEETS_URL){
-    const result=await sheetsGet('getSessions');
-    if(result?.success&&result.sessions?.length){
-      renderSessionsList(result.sessions,true);
-      if(icon)icon.textContent='☁️';if(txt)txt.textContent=`${result.sessions.length} sessions dans Google Sheets`;
-    } else {renderLocalHistory();if(icon)icon.textContent='⚠️';if(txt)txt.textContent='Sheets indisponible — données locales';}
-    loadRecompenses();
-  } else {renderLocalHistory();if(icon)icon.textContent='💾';if(txt)txt.textContent='Données locales · Configurer Sheets';}
+function setSyncStatus(text, cls) {
+  const el = document.getElementById('sync-indicator');
+  el.textContent = text;
+  el.className = 'sync-status ' + cls;
 }
 
-function renderLocalHistory(){
-  if(!STATE.sessions.length){document.getElementById('parent-history').innerHTML='<p style="color:var(--muted);text-align:center;font-size:.88rem">Aucune session.</p>';return;}
-  renderSessionsList([...STATE.sessions].reverse().map(s=>({'Date':s.date,'Matière Bloc1':s.bloc1?.matiere||'—','Score Bloc1 /10':s.bloc1?.score??'','Matière Bloc2':s.bloc2?.matiere||'—','Score Bloc2 /5':s.bloc2?.score??'','Badges session':(s.badges||[]).join(', ')})),false);
+
+// ============================================================
+// EDIT ENTRETIEN
+// ============================================================
+let selectedEditTags = [];
+let currentAlertIndex = null;
+let currentAlertCollabId = null;
+
+function ouvrirEditEntretien(entretienId, collabId) {
+  const e = entretiensData.find(x => x.id === entretienId);
+  if (!e) return;
+  document.getElementById('edit-entretien-id').value = e.id;
+  document.getElementById('edit-entretien-collab-id').value = e.collabId;
+  document.getElementById('edit-entretien-date').value = e.date ? e.date.split('T')[0] : '';
+  document.getElementById('edit-entretien-contenu').value = e.contenu || '';
+  document.getElementById('edit-entretien-detail').value = e.detailRetenir || '';
+  document.getElementById('edit-entretien-action').value = e.actionAFaire || '';
+  selectedEditTags = (e.tags || '').split(',').filter(Boolean);
+  document.querySelectorAll('#edit-tag-selector .tag-btn').forEach(btn => {
+    const tag = btn.getAttribute('onclick').match(/'([^']+)'\)/)[1];
+    btn.classList.toggle('selected', selectedEditTags.includes(tag));
+  });
+  document.getElementById('modal-edit-entretien').classList.add('active');
 }
 
-function renderSessionsList(sessions,fromCloud){
-  document.getElementById('parent-history').innerHTML=sessions.slice(0,20).map(s=>`
-    <div class="history-item">
-      <div class="history-date">📅 ${s['Date']||'—'}${fromCloud?' <span style="color:var(--green);font-size:.7rem">☁️</span>':''}</div>
-      <div class="history-scores">
-        <div class="history-score">📚 ${s['Matière Bloc1']||'—'} : <strong>${s['Score Bloc1 /10']!==''?s['Score Bloc1 /10']+'/10':'N/A'}</strong></div>
-        <div class="history-score">🏆 ${s['Matière Bloc2']||'—'} : <strong>${s['Score Bloc2 /5']!==''?s['Score Bloc2 /5']+'/5':'N/A'}</strong></div>
-      </div>
-      ${s['Badges session']?`<div style="margin-top:.4rem;font-size:.78rem;color:var(--gold)">${s['Badges session']}</div>`:''}</div>`).join('');
+function closeModalEntretien() {
+  document.getElementById('modal-edit-entretien').classList.remove('active');
 }
 
-async function loadRecompenses(){
-  if(!SHEETS_URL)return;
-  const result=await sheetsGet('getRecompenses');
-  if(!result?.success||!result.recompenses?.length)return;
-  document.getElementById('recomp-list').innerHTML=result.recompenses.map(r=>`
-    <div class="recomp-item"><div class="recomp-pts">${r.points} sessions</div>
-    <div><div style="font-weight:600">${r.nom}</div>
-    <div style="color:var(--muted);font-size:.8rem;margin-top:.1rem">${r.description}</div></div></div>`).join('');
+function toggleEditTag(btn, tag) {
+  btn.classList.toggle('selected');
+  if (selectedEditTags.includes(tag)) selectedEditTags = selectedEditTags.filter(t=>t!==tag);
+  else selectedEditTags.push(tag);
+}
+
+async function sauvegarderEntretien() {
+  const id = document.getElementById('edit-entretien-id').value;
+  const collabId = document.getElementById('edit-entretien-collab-id').value;
+  try {
+    await callScript('updateEntretien', { data: {
+      id,
+      collabId,
+      date: document.getElementById('edit-entretien-date').value,
+      contenu: document.getElementById('edit-entretien-contenu').value,
+      tags: selectedEditTags,
+      detailRetenir: document.getElementById('edit-entretien-detail').value,
+      actionAFaire: document.getElementById('edit-entretien-action').value,
+    }});
+    closeModalEntretien();
+    showToast('✅ Entretien mis à jour !');
+    await loadAll();
+    openDetail(collabId);
+  } catch(e) { showToast('❌ ' + e.message); }
+}
+
+// ============================================================
+// ACTIONS ALERTES — FAIT / KO
+// ============================================================
+async function actionFaite(index, collabId) {
+  const card = document.getElementById('alert-' + index);
+  if (card) {
+    card.style.opacity = '0.4';
+    card.style.pointerEvents = 'none';
+  }
+  try {
+    await callScript('marquerActionFaite', { collabId });
+    showToast('✅ Action marquée comme faite !');
+    await loadAll();
+  } catch(e) {
+    showToast('✅ Noté localement !');
+    if (card) card.remove();
+  }
+}
+
+function actionKO(index, collabId) {
+  currentAlertIndex = index;
+  currentAlertCollabId = collabId;
+  document.getElementById('ko-reason').value = '';
+  document.getElementById('ko-overlay').classList.add('active');
+}
+
+function closeKO() {
+  document.getElementById('ko-overlay').classList.remove('active');
+  currentAlertIndex = null;
+  currentAlertCollabId = null;
+}
+
+async function confirmerKO() {
+  const reason = document.getElementById('ko-reason').value.trim();
+  if (!reason) { showToast('⚠️ Indique une raison'); return; }
+  const card = document.getElementById('alert-' + currentAlertIndex);
+  try {
+    await callScript('marquerActionKO', { collabId: currentAlertCollabId, raison: reason });
+    showToast('❌ Action annulée — raison notée');
+    closeKO();
+    await loadAll();
+  } catch(e) {
+    showToast('❌ Noté : ' + reason);
+    if (card) card.remove();
+    closeKO();
+  }
+}
+
+// Init
+document.getElementById('form-date').value = new Date().toISOString().split('T')[0];
+if (SCRIPT_URL) {
+  document.getElementById('config-url').value = SCRIPT_URL;
+  loadAll();
 }
 </script>
 </body>
